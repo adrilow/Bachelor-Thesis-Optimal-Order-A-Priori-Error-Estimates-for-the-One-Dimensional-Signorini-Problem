@@ -1,0 +1,351 @@
+%\documentclass[headsepline,footsepline,footinclude=false,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc,BCOR=12mm,DIV=12]{scrbook} % two-sided
+\documentclass[headsepline,footsepline,footinclude=false,oneside,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc]{scrbook} % one-sided
+
+%\documentclass[english,a4paper,12pt,oneside]{scrbook}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{commath}
+\usepackage{mathtools}
+\usepackage{aligned-overset}
+\usepackage{marvosym}
+\usepackage{graphics}
+\usepackage[%
+backend=biber,
+url=false,
+style=numeric,
+maxnames=4,
+minnames=3,
+maxbibnames=99,
+sorting=none,
+giveninits,
+uniquename=init]{biblatex} % TODO: adapt citation style
+\usepackage{microtype}
+\usepackage{bera}
+\usepackage{xcolor}
+
+
+\bibliography{Bibliography}
+\setkomafont{disposition}{\normalfont\bfseries} % use serif font for headings
+\linespread{1.05} % adjust line spread for mathpazo font
+
+\newenvironment{changemargin}[2]{%
+	\begin{list}{}{%
+			\setlength{\topsep}{0pt}%
+			\setlength{\leftmargin}{#1}%
+			\setlength{\rightmargin}{#2}%
+			\setlength{\listparindent}{\parindent}%
+			\setlength{\itemindent}{\parindent}%
+			\setlength{\parsep}{\parskip}%
+		}%
+		\item[]}
+	{\end{list}}
+
+\makeatletter
+\makeatletter
+\newcommand{\mytag}[2]{%
+	\text{#1}%
+	\@bsphack
+	\protected@write\@auxout{}%
+	{\string\newlabel{#2}{{#1}{\thepage}}}%
+	\@esphack
+}
+\makeatother
+
+\makeatletter
+\newcommand{\mytaghr}[2]{%
+	\text{#1}%
+	\@bsphack
+	\begingroup
+	\@onelevel@sanitize\@currentlabelname
+	\edef\@currentlabelname{%
+		\expandafter\strip@period\@currentlabelname\relax.\relax\@@@%
+	}%
+	\protected@write\@auxout{}{%
+		\string\newlabel{#2}{%
+			{#1}%
+			{\thepage}%
+			{\@currentlabelname}%
+			{\@currentHref}{}%
+		}%
+	}%
+	\endgroup
+	\@esphack
+}
+\makeatother
+
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+%\newtheorem{satz}{Satz}[chapter]
+%\theoremstyle{definition} 
+%\newtheorem{definition}[satz]{Definition} 
+%\theoremstyle{definition} 
+%\newtheorem{lemma}[satz]{Lemma} 
+%\theoremstyle{definition} 
+%\newtheorem{bemerkung}[satz]{Bemerkung}
+%\theoremstyle{definition} 
+%\newtheorem{korollar}[satz]{Korollar} 
+%\theoremstyle{definition}
+%\newtheorem{beispiel}[satz]{Beispiel} 
+%\theoremstyle{definition} 
+%\newtheorem{algorithmus}{Algorithmus} 
+%\newenvironment{beweis}{\begin{proof}[Beweis]}{\end{proof}}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.8em}
+
+\begin{document}
+
+
+% Titelseite
+\pagestyle{empty}       % keine Seitennummer
+  \parbox{1.5cm}{\resizebox*{110pt}{!}{\includegraphics{tum.pdf}}}\hspace{310pt}%
+  \parbox{1.5cm}{\resizebox*{90pt}{!}{\includegraphics{FAK_MA_CMYK.pdf}}}%
+\vspace*{1.5cm}
+\begin{center}
+{\huge \MakeUppercase{Department of Mathematics}} 
+\\
+\vspace*{5mm}
+{\large \MakeUppercase{Technische Universität München} }
+\\
+\vspace*{2cm}
+{\huge {\textbf{{Optimal-Order A-Priori Error Estimates} \\ for the
+One-Dimensional\\ Signorini Problem}\par}}
+\vspace*{2cm}
+{\Large Bachelor's Thesis}\linebreak \\ 
+{\Large by}\linebreak \\
+{\Large Adrián Löwenberg Casas}\\
+\vspace*{1.8cm}
+{\large 
+\begin{tabular}{ll}
+Supervisor: & Prof. Dr. Boris Vexler\\
+Advisor: & Dr. Constantin Christof\\
+Submission Date: & 15th August 2020
+\end{tabular}
+}
+\end{center}
+\newpage    % Seitenwechsel
+
+% Seite 2
+\thispagestyle{empty}
+\vspace*{0.70\textheight}
+\noindent
+I confirm that this bachelor’s thesis in mathematics is my own work and I have
+documented all sources and material used.
+
+\vspace{30mm}
+Munich,\hspace{80mm} Adrián Löwenberg Casas
+\enlargethispage{10\baselineskip}
+\newpage
+
+\addcontentsline{toc}{chapter}{Acknowledgments}
+\thispagestyle{empty}
+
+\vspace*{20mm}
+
+\begin{center}
+	{\usekomafont{section} Acknowledgments}
+\end{center}
+
+\vspace{10mm}
+% Seitennummerierung römisch
+\pagenumbering{roman}
+% Kopfzeilen (automatisch erzeugt)
+\pagestyle{headings}
+[Text der Danksagung]
+\newpage
+
+% Seite 3
+\addcontentsline{toc}{chapter}{Abstract}
+\chapter*{}
+\vspace*{-2.2cm}
+\section*{Zusammenfassung auf Deutsch}
+[Text der Zusammenfassung]
+\section*{Zusammenfassung auf Englisch}
+[Summary of the thesis]
+%Seite 4
+\newpage
+\microtypesetup{protrusion=false}
+\tableofcontents{}
+\microtypesetup{protrusion=true} 
+
+
+\pagenumbering{arabic}  % Nummerierung der Seiten in 'arabisch' % neues Kapitel mit Namen "Introduction"
+\chapter{Einleitung}  \setcounter{page}{1}   % setzt Seitenzaehlung auf 1
+Zitate aus B\"uchern werden so gemacht, siehe in \cite{schoenbucher03} oder \cite{marshall67}.
+
+\chapter{Theory}
+
+\begin{definition}The One Dimensional Signorini Problem \newline
+	Let $\Omega \coloneqq (-1,1)$. We denote the boundary of $\Omega$ by $\partial\Omega = \{-1,1\}$ and the normal derivative of $u$ on $\partial\Omega$ by $\partial_nu$, i.e. $\partial_nu(-1) = -u'(-1)$ and $\partial_nu(1) = u'(1)$. Furthermore let $f \in L^2(-1,1)$ be the given forcing term. The One-Dimensional Signorini Problem is defined as follows:
+	\begin{align}
+	-u'' + u &= f \quad \textnormal{in} \quad \Omega \label{eq:signorini}\\ 
+	\partial_n u \geq 0,\quad u &\geq 0,\quad u\partial_nu = 0 \quad\textnormal{on}\quad \partial \Omega \label{eq:boundary_signorini}
+	\end{align}
+\end{definition}
+
+\begin{definition}One dimensional Sobolev-Spaces \newline
+	Let $p\in [1,\infty]$. For $k,p \in \mathbb{N}$, the Sobolev-Space $W^{k,p}(a,b)$ is defined as follows:
+	\begin{align}
+	\begin{split}
+	W^{0,p}(a,b) &\coloneqq L^p(a,b) \\
+	W^{k,p}(a,b) &\coloneqq \big\{ v \in W^{k-1,p}(a,b) \,|\, \exists w \in W^{k-1,p}(a,b), c\in\mathbb{R}. \\
+	& \phantom{\coloneqq \big\{\,\,} v(t) =  c + \int_a^t w(\tau) \dif \tau \quad \mathit{f.a.a.} \, t\in (0,1)  \big\}
+	\end{split}
+	\end{align}
+	For $v\in W^{k,p}$ the function $w$ in the definition is called the weak derivative of $v$, and in this context the notation $v' \coloneqq w$ is useful. One can naturally expand this notation to the $k$th weak derivative $v^{(k)}$.
+	$W^{k,p}(a,b)$ is a Banach Space with the following norm:
+	\begin{equation}
+	\norm{v}_{W^{k,p}(a,b)} \coloneqq \left(\sum\limits_{i = 0}^k \norm{v^{(i)}}_{L^p(a,b)}^p\right)^{1/p}
+	\end{equation}
+	In the case of $p=2$ the notation $H^k(a,b) \coloneqq W^{k,2}(a,b)$ is used. This space is a Hilbert Space with the following inner product:
+	\begin{equation}
+	(v,z)_{H^k(a,b)} \coloneqq \sum_{i=0}^{k} (v^{(k)}, z^{(k)})_{L^2(a,b)} = \sum_{i=0}^{k} \int_a^b v^{(k)}(\tau)z^{(k)}(\tau) \dif \tau \label{eq:sobolev1_inner_product}
+	\end{equation}
+	These results can be found in the literature, for example in \cite{mitrovic1997fundamentals}.
+\end{definition}
+
+According to this definition, the Sobolev-Spaces are subspaces of the $L^p$-spaces, therefore their elements are equivalence classes of Lebesgue-almost everywhere equal functions. In order to formulate the Signorini Problem weakly, we however need to enforce the boundary conditions, which are defined on the two points of $\partial \Omega$. We will show that in the case of $H^k(a,b)$, there is always a canonical representative in $C^{k-1}([a,b])$.
+
+\begin{lemma} Sobolev Embedding for $H^k(a,b)$ \newline
+	For every $u \in H^k(a,b)$ there exists a $v \in C^{k-1}([a,b])$, such that $u = [v \vert_{(a,b)}]$. As an embedding, this can be written as:
+	\begin{equation}
+	H^k(a,b) \subset C^{k-1}([a,b])
+	\end{equation}
+	\begin{proof}
+	We will start by showing that $H^1(a,b) \subset C^0([a,b])$. Let $u \in H^1(a,b)$, $a \leq x_1 < x_2 \leq b$, and let $u = [v]$ such that $v(x) = v_0 + \int_a^b w(\tau) \dif \tau$. We will show that $v$ is Hölder-continuous, which implies continuity:
+	\begin{align*}
+	\vert v(x_1) - v(x_2) \vert &= \left\vert \int_{a}^{x_1} w(\tau) \dif \tau - \int_{a}^{x_2} w(\tau) \dif \tau \right\vert \\
+	&= \left\vert \int_{x_1}^{x_2} w(\tau) \dif \tau \right\vert \overset{\textnormal{Hölder}}{\leq} \Vert w \Vert_{L^2} \left\vert \int_{x_1}^{x_2} 1 \dif \tau \right\vert ^{\frac{1}{2}} \\
+	& = \Vert w \Vert_{L^2} \vert x_1 - x_2 \vert ^{\frac{1}{2}}
+	\end{align*}
+	This case serves as an induction basis. For the induction step it suffices to apply the Fundamental Theorem of Calculus and integrate the continuous representative of the weak derivative to show that it is indeed the classical derivative.
+	
+	\textcolor{red}{QUESTION: Is this proof correct? I am pretty sure about the ideas, but maybe some detail is not completely precise. Should I elaborate on the induction step?}
+	\end{proof}
+\end{lemma}
+
+Using this Lemma, we will henceforth identify elements of $H^k$ with their continuous representatives, allowing for the following statements involving pointwise conditions on elements of this space to be well-defined.
+
+\begin{theorem} Equivalent formulation as a variational inequality\newline
+	Let $K \coloneqq \left\{ v\in H^1(-1,1) \,|\, v(-1) \geq 0, v(1) \geq 0 \right\}$. Then a solution $u \in K$ of the following variational inequality is a weak solution of \eqref{eq:signorini}:
+	\begin{equation}
+	\int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K \label{eq:variational_inequality}
+	\end{equation}
+	Taking the definition of the inner product in the space $H^1$ into account \eqref{eq:sobolev1_inner_product}, this can be equivalently written as:
+	\begin{equation}
+	(u,v-u)_{H^1(-1,1)} \geq (f,v-u)_{L^2(-1,1)} \quad \forall v \in K
+	\end{equation}
+	\begin{proof}
+	Consider the differential form of the Signorini Problem \eqref{eq:signorini}, and let $v \in K$. Multiplying by the test function $v-u$ and integrating over the domain $\Omega$ yields:
+	\begin{align*}
+	&\int_{-1}^1 {(-u'' + u - f)(v - u)\dif x} = 0  \\
+	\Longleftrightarrow &\int_{-1}^1 -u''(v-u) \dif x + \int_{-1}^1 u(v-u) - f (v-u) \dif x =0
+	\end{align*}
+	The right term is already in the required form. We now integrate the left term by parts to remove the second derivative:
+	\begin{align}
+	\Longleftrightarrow \underbrace{\left. -u'(v-u) \right|_{-1}^{1}}_{\textnormal{(}\mytag{*}{eq:boundary_int_term}\textnormal{)}} + \int_{-1}^1{u'(v'-u') + u(v-u) - f(v-u) \dif x} = 0 \label{eq:variational_equality}
+	\end{align}
+	We resolve the boundary term from the integration by parts with the boundary conditions on the Signorini Problem \eqref{eq:boundary_signorini}:
+	\begin{align*}
+	\eqref{eq:boundary_int_term} &= -u'(1)v(1) + \underbrace{u'(1)u(1)}_{\overset{\eqref{eq:boundary_signorini}}{=} 0} + u'(-1)v(-1) - \underbrace{u'(-1)u(1)}_{\overset{\eqref{eq:boundary_signorini}}{=} 0} \\
+	&= -u'(1)v(1) + u'(-1)v(-1) \overset{\eqref{eq:boundary_signorini}}{\leq} 0
+	\end{align*}
+	Enforcing this inequality on \eqref{eq:variational_equality} results in the desired variational inequality \eqref{eq:variational_inequality}.
+	
+	\textcolor{red}{QUESTION: Why is this true? The left part being $\leq 0$ and the right part being $\geq 0$ does not imply that they cancel each other. Where does the quantifier come from ($\forall v \in K$)?}
+	\end{proof}
+\end{theorem}
+
+We will now formulate this problem as a convex minimization problem in the Sobolev Banach Space. This will be useful when considering the existence and uniqueness of solutions, as it will allow for the use of standard techniques of convex optimization.
+
+\begin{theorem} Equivalent formulation as a convex minimization problem\newline
+	A solution $u \in H^1(-1,1)$ of the following minimization problem is a weak solution of \eqref{eq:signorini}:
+	\begin{align} \label{eq:minimization_problem}
+	\begin{split}
+	&\min_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v)	\\
+	F(v) &\coloneqq \int_{-1}^1{\frac{1}{2} (v')^2 + \frac{1}{2} v^2 - fv \dif x}
+	\end{split}
+	\end{align}
+	The functional $F$ can be understood as the energy functional. This is a convex problem.
+	\begin{proof}
+	We start with the variational inequality \eqref{eq:variational_inequality}:
+	\begin{align*}
+		&\int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K \\
+		\Longleftrightarrow & \int_{-1}^1 u'v' - (u')^2 + uv - u^2 - fv - fu \dif x \geq 0 \quad \forall v \in K \\
+	\end{align*}
+	We will now use the Young inequality to bound the integral from above:
+	\begin{equation}
+	ab \leq \frac{1}{2} a^2 + \frac{1}{2} b^2 \label{eq:binomial_inequality}
+	\end{equation}
+	This follows directly from the binomial formula. Using it on the variational inequality yields the following:
+	\begin{align*}
+	&\int_{-1}^1 \frac{1}{2} (u')^2 + \frac{1}{2} (v')^2 - (u')^2 + \frac{1}{2} u^2 + \frac{1}{2} v^2 - u^2 - fv - fu \dif x \geq 0 \quad \forall v \in K \\
+	\Longleftrightarrow & \int_{-1}^1 \frac{1}{2} (v')^2 + \frac{1}{2} v^2 - fv \dif x \geq \int_{-1}^1 \frac{1}{2} (u')^2 + \frac{1}{2} u^2 - fu \dif x \quad \forall v \in K
+	\end{align*}
+	Or, equivalently:
+	\begin{equation*}
+	F(v) \geq F(u) \quad \forall v \in K 
+	\quad \Longleftrightarrow \quad u = \argmin_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v)
+	\end{equation*}
+	We will now prove the convexity of $F$, to this avail let $\alpha \in (0,1)$. We will start by showing that it is a sublinear functional:
+	\begin{align}\label{eq:F_sublinear_functional}
+	\begin{split}
+	F(\alpha v) &= \int_{-1}^{1} \alpha^2 \left(\frac{1}{2}(v')^2 + \frac{1}{2}v^2 \right) - \alpha f v \dif x \\
+	&= \alpha \int_{-1}^{1} \alpha \left(\frac{1}{2}(v')^2 + \frac{1}{2}v^2 \right) - f v \dif x \leq \alpha F(v)
+	\end{split}
+	\end{align}
+	With this the convexity follows:
+	\begin{align}\label{eq:F_convex}
+	\begin{split}
+	F((1-\alpha)v + \alpha u) &= \int_{-1}^1 \frac{1}{2}((1-\alpha)v')^2 + \frac{1}{2}(\alpha u')^2 - (1-\alpha)\alpha v'u' \\
+	& \phantom{= \int_{-1}^1 {}\,\,} \frac{1}{2}((1-\alpha)v)^2 + \frac{1}{2}(\alpha u)^2 - (1-\alpha)\alpha vu \\
+	& \phantom{= \int_{-1}^1 {}\,\,} f(1-\alpha)v - f(\alpha u) \dif x \\
+	&= F((1-\alpha)v) + F(\alpha u) - \underbrace{\int_{-1}^1{(1-\alpha) (\alpha v'u' + \alpha vu) \dif x}}_{\textnormal{\textcolor{red}{QUESTION: $\geq 0$?}}} \\
+	\overset{\eqref{eq:F_sublinear_functional}}&{\leq} (1-\alpha)F(v) + \alpha F(u)
+	\end{split}
+	\end{align}
+	\end{proof}
+\end{theorem}
+
+\begin{theorem} Existence of a unique solution to the Signorini Problem \newline
+	The weak formulation of the Signorini Problem \eqref{eq:minimization_problem} has a unique solution $u \in H^2(-1,1)$
+	\begin{proof}
+		We will prove this using the Direct Method in the Calculus of Variations. In a first step, we will show that the functional $F$ is bounded from below. To this avail define $\{v_n\}_{n\in \mathbb{N}} \subset H^1(-1,1)$ such that: 
+		\begin{equation*}
+		v_n(\pm 1) \geq 0\textnormal{,} \quad \lim\limits_{n \rightarrow \infty} F(v_n) = \inf_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v)
+		\end{equation*} 
+		Then there exists a constant $C$ such that:
+		\begin{align*}
+		C \geq F(v_n) \overset{\eqref{eq:minimization_problem}}&{=} \frac{1}{2} \norm{v_n}_{H^1}^2 - (f,v)_{L^2} = \frac{1}{2} \norm{v_n}_{H^1}^2 - \left(4f,\frac{1}{4}v\right)_{L^2} \\
+		&\geq \frac{1}{2}\norm{v_n}_{H^1}^2 - \frac{1}{4} \norm{v_n}_{L^2}^2 - 4 \norm{f}_{L^2}^2 \\
+		&\geq \frac{1}{4} \norm{v_n}_{H^1}^2 - 4 \norm{f}_{L^2}^2
+		\end{align*}
+		\begin{equation*}
+		\Longrightarrow \norm{v_n}_{H^1}^2 \leq 4\left(C + 4 \norm{f}_{L^2}^2\right) \eqqcolon \tilde{C}
+		\end{equation*}
+		The infimal sequence is bounded and therefore also the functional. Now we will use the Functional Analysis result, that a bounded sequence in a Hilbert Space has a weakly convergent subsequence. This can be found for example in Royden and Fitzpatrick \cite[Chapter 16, Theorem 6]{royden2010real}. On top of that, we use that a convex, continuous functional is weakly lower semi-continuous, as can be found in Kurdila and Zabarankin \cite[Theorem 7.2.5]{kurdila2005convex}. 
+		
+		\textcolor{red}{QUESTION: We never proved that the functional is continuous. I am guessing this is not completely trivial, as it is not linear. How do I approach this?}
+		
+		Let $\{\tilde{v}_n\}_{n\in \mathbb{N}} $ be the weakly convergent subsequence such that $\tilde{v}_n \rightharpoonup u$. Then the claim follows, by definition of weak convergence and lower semi-continuity:
+		\begin{equation*}
+		\inf_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v) =  \liminf\limits_{n\rightarrow\infty} F(\tilde{v}_n) \geq F(u)
+		\end{equation*}
+	\end{proof}
+\end{theorem}
+
+
+
+\chapter{Kapitel 3}
+\chapter{Anhang}
+
+\printbibliography{}
+\end{document}
+
