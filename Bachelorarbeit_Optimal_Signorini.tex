@@ -5,6 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{amsmath, amsthm, amssymb}
+\usepackage{theoremref}
 \usepackage{commath}
 \usepackage{mathtools}
 \usepackage{aligned-overset}
@@ -96,6 +97,7 @@ uniquename=init]{biblatex} % TODO: adapt citation style
 \newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
 \newtheorem{definition}{Definition}
+\newtheorem{corollary}{Corollary}
 
 \setlength{\parindent}{0em}
 \setlength{\parskip}{0.8em}
@@ -190,8 +192,8 @@ Zitate aus B\"uchern werden so gemacht, siehe in \cite{schoenbucher03} oder \cit
 	\end{align}
 \end{definition}
 
-\begin{definition}One dimensional Sobolev-Spaces \newline
-	Let $p\in [1,\infty]$. For $k,p \in \mathbb{N}$, the Sobolev-Space $W^{k,p}(a,b)$ is defined as follows:
+\begin{definition}One Dimensional Sobolev-Spaces \newline
+	Let $p\in [1,\infty]$. For $k \in \mathbb{N}_0$ and $p \in \mathbb{N}$, the Sobolev-Space $W^{k,p}(a,b)$ is defined as follows:
 	\begin{align}
 	\begin{split}
 	W^{0,p}(a,b) &\coloneqq L^p(a,b) \\
@@ -208,32 +210,40 @@ Zitate aus B\"uchern werden so gemacht, siehe in \cite{schoenbucher03} oder \cit
 	\begin{equation}
 	(v,z)_{H^k(a,b)} \coloneqq \sum_{i=0}^{k} (v^{(k)}, z^{(k)})_{L^2(a,b)} = \sum_{i=0}^{k} \int_a^b v^{(k)}(\tau)z^{(k)}(\tau) \dif \tau \label{eq:sobolev1_inner_product}
 	\end{equation}
-	These results can be found in the literature, for example in \cite{mitrovic1997fundamentals}.
+	These results can be found in the literature, for example in Mitrović and Žubrinić \cite[Chapter 5, Section 2, Remark 2]{mitrovic1997fundamentals}.
 \end{definition}
 
 According to this definition, the Sobolev-Spaces are subspaces of the $L^p$-spaces, therefore their elements are equivalence classes of Lebesgue-almost everywhere equal functions. In order to formulate the Signorini Problem weakly, we however need to enforce the boundary conditions, which are defined on the two points of $\partial \Omega$. We will show that in the case of $H^k(a,b)$, there is always a canonical representative in $C^{k-1}([a,b])$.
 
-\begin{lemma} Sobolev Embedding for $H^k(a,b)$ \newline
-	For every $u \in H^k(a,b)$ there exists a $v \in C^{k-1}([a,b])$, such that $u = [v \vert_{(a,b)}]$. As an embedding, this can be written as:
+\begin{lemma}\thlabel{thm:sobolev_embedding_1} Sobolev Embedding for $H^1(a,b)$ \newline
+	For every $u \in H^1(a,b)$ there exists a $v \in C^{0,\frac{1}{2}}([a,b])$, where $C^{0,\frac{1}{2}}$ is a Hölder-Space with Hölder-continuity constant $\frac{1}{2}$, such that $u = [v \vert_{(a,b)}]$. As an embedding, this can be written as:
 	\begin{equation}
-	H^k(a,b) \subset C^{k-1}([a,b])
+	H^1(a,b) \hookrightarrow C^{0,\frac{1}{2}}([a,b])
 	\end{equation}
 	\begin{proof}
-	We will start by showing that $H^1(a,b) \subset C^0([a,b])$. Let $u \in H^1(a,b)$, $a \leq x_1 < x_2 \leq b$, and let $u = [v]$ such that $v(x) = v_0 + \int_a^b w(\tau) \dif \tau$. We will show that $v$ is Hölder-continuous, which implies continuity:
+	Let $u \in H^1(a,b)$, $a \leq x_1 < x_2 \leq b$, and let $u = [v]$ such that $v(x) = v_0 + \int_a^x w(\tau) \dif \tau$. We will show that $v$ is $\frac{1}{2}$-Hölder-continuous:
 	\begin{align*}
 	\vert v(x_1) - v(x_2) \vert &= \left\vert \int_{a}^{x_1} w(\tau) \dif \tau - \int_{a}^{x_2} w(\tau) \dif \tau \right\vert \\
 	&= \left\vert \int_{x_1}^{x_2} w(\tau) \dif \tau \right\vert \overset{\textnormal{Hölder}}{\leq} \Vert w \Vert_{L^2} \left\vert \int_{x_1}^{x_2} 1 \dif \tau \right\vert ^{\frac{1}{2}} \\
 	& = \Vert w \Vert_{L^2} \vert x_1 - x_2 \vert ^{\frac{1}{2}}
 	\end{align*}
-	This case serves as an induction basis. For the induction step it suffices to apply the Fundamental Theorem of Calculus and integrate the continuous representative of the weak derivative to show that it is indeed the classical derivative.
-	
-	\textcolor{red}{QUESTION: Is this proof correct? I am pretty sure about the ideas, but maybe some detail is not completely precise. Should I elaborate on the induction step?}
 	\end{proof}
 \end{lemma}
 
-Using this Lemma, we will henceforth identify elements of $H^k$ with their continuous representatives, allowing for the following statements involving pointwise conditions on elements of this space to be well-defined.
+\begin{corollary} Sobolev Embedding for $H^k(a,b)$ \newline
+		For every $u \in H^k(a,b)$ there exists a $v \in C^{k-1}([a,b])$, such that $u = [v \vert_{(a,b)}]$. As an embedding, this can be written as:
+	\begin{equation}
+	H^k(a,b) \hookrightarrow C^{k-1}([a,b])
+	\end{equation}
+	\begin{proof}
+		This follows directly from \thref{thm:sobolev_embedding_1} and the Fundamental Theorem of Calculus.
+	\end{proof}
+\end{corollary}
+	
 
-\begin{theorem} Equivalent formulation as a variational inequality\newline
+Using these statements, we will henceforth identify elements of $H^k$ with their continuous representatives, allowing for the following statements involving pointwise conditions on elements of this space to be well-defined.
+
+\begin{theorem} Weak Formulation of the Signorini Problem\newline
 	Let $K \coloneqq \left\{ v\in H^1(-1,1) \,|\, v(-1) \geq 0, v(1) \geq 0 \right\}$. Then a solution $u \in K$ of the following variational inequality is a weak solution of \eqref{eq:signorini}:
 	\begin{equation}
 	\int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K \label{eq:variational_inequality}
