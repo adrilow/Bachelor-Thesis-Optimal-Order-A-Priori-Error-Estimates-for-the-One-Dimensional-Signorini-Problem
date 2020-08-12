@@ -5,6 +5,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{amsmath, amsthm, amssymb}
+\allowdisplaybreaks
+\usepackage{aligned-overset}
 \usepackage{theoremref}
 \usepackage{commath}
 \usepackage{mathtools}
@@ -128,7 +130,7 @@ One-Dimensional\\ Signorini Problem}\par}}
 \begin{tabular}{ll}
 Supervisor: & Prof. Dr. Boris Vexler\\
 Advisor: & Dr. Constantin Christof\\
-Submission Date: & 15th August 2020
+Submission Date: & 15th September 2020
 \end{tabular}
 }
 \end{center}
@@ -198,7 +200,7 @@ Zitate aus B\"uchern werden so gemacht, siehe in \cite{schoenbucher03} oder \cit
 	\begin{split}
 	W^{0,p}(a,b) &\coloneqq L^p(a,b) \\
 	W^{k,p}(a,b) &\coloneqq \big\{ v \in W^{k-1,p}(a,b) \,|\, \exists w \in W^{k-1,p}(a,b), c\in\mathbb{R}. \\
-	& \phantom{\coloneqq \big\{\,\,} v(t) =  c + \int_a^t w(\tau) \dif \tau \quad \mathit{f.a.a.} \, t\in (0,1)  \big\}
+	& \phantom{\coloneqq \big\{\,\,} v(t) =  c + \int_a^t w(\tau) \dif \tau \quad \mathit{f.a.a.} \, t\in (a,b)  \big\}
 	\end{split}
 	\end{align}
 	For $v\in W^{k,p}$ the function $w$ in the definition is called the weak derivative of $v$, and in this context the notation $v' \coloneqq w$ is useful. One can naturally expand this notation to the $k$th weak derivative $v^{(k)}$.
@@ -250,10 +252,10 @@ Using these statements, we will henceforth identify elements of $H^k$ with their
 	\end{equation}
 	Taking the definition of the inner product in the space $H^1$ into account \eqref{eq:sobolev1_inner_product}, this can be equivalently written as:
 	\begin{equation}
-	(u,v-u)_{H^1(-1,1)} \geq (f,v-u)_{L^2(-1,1)} \quad \forall v \in K
+	(u,v-u)_{H^1(\Omega)} \geq (f,v-u)_{L^2(\Omega)} \quad \forall v \in K
 	\end{equation}
 	\begin{proof}
-	Consider the differential form of the Signorini Problem \eqref{eq:signorini}, and let $v \in K$. Multiplying by the test function $v-u$ and integrating over the domain $\Omega$ yields:
+	Consider the differential form of the Signorini Problem \eqref{eq:signorini} \eqref{eq:boundary_signorini} and suppose $u \in C([-1,1])$ solves it classically. Furthermore let $v \in K$. Multiplying \eqref{eq:signorini} by the test function $v-u$ and integrating over the domain $\Omega$ yields:
 	\begin{align*}
 	&\int_{-1}^1 {(-u'' + u - f)(v - u)\dif x} = 0  \\
 	\Longleftrightarrow &\int_{-1}^1 -u''(v-u) \dif x + \int_{-1}^1 u(v-u) - f (v-u) \dif x =0
@@ -269,20 +271,39 @@ Using these statements, we will henceforth identify elements of $H^k$ with their
 	\end{align*}
 	Enforcing this inequality on \eqref{eq:variational_equality} results in the desired variational inequality \eqref{eq:variational_inequality}.
 	
-	\textcolor{red}{QUESTION: Why is this true? The left part being $\leq 0$ and the right part being $\geq 0$ does not imply that they cancel each other. Where does the quantifier come from ($\forall v \in K$)?}
+	We now observe that the derived formulation of the problem does not need the assumption of $u \in C([-1,1])$ and can be more generally defined for $u \in K$. Hence this is the weak formulation of the problem.
+	
 	\end{proof}
 \end{theorem}
 
 We will now formulate this problem as a convex minimization problem in the Sobolev Banach Space. This will be useful when considering the existence and uniqueness of solutions, as it will allow for the use of standard techniques of convex optimization.
 
+\begin{lemma} The functional to minimize is convex \newline
+	Define the functional $F$ as follows:
+	\begin{equation}
+			F(v) \coloneqq \int_{-1}^1{\frac{1}{2} (v')^2 + \frac{1}{2} v^2 - fv \dif x}
+	\end{equation}
+	This functional is uniformly (therefore strictly) convex.
+	\begin{proof}
+		Firstly, we note that $F(v) = \frac{1}{2} \norm{v}_{H^1}^2 - (f,v)_{L^2} $. It therefore suffices to show that $v \mapsto \norm{v}_{H^1}^2$ is uniformly convex, as affine transformations do not alter it. We will show that this is true for every scalar-product induced norm in a space $(X, (\cdot,\cdot))$. To that avail, let $v,w \in X$, $v \neq w$ and $\lambda \in (0,1)$:
+		\begin{align*}
+		(1-\lambda)\norm{v}^2 &+ \lambda\norm{w}^2 - \norm{(1-\lambda)v - \lambda w}^2 \\
+		& = (1-\lambda) (v,v) + \lambda (w,w) - (((1-\lambda)v,(1-\lambda)v) + 2((1-\lambda)v, \lambda w)+ (\lambda w, \lambda w)) \\
+		&= (1-\lambda) (v,v) - (1-\lambda)^2 (v,v) - 2 (1-\lambda)\lambda(v,w) + \lambda (w,w) - \lambda^2 (w,w) \\
+		&= (1-\lambda)(1-(1-\lambda))(v,v)- 2 (1-\lambda)\lambda(v,w) + \lambda (1-\lambda)(w,w) \\
+		&= \lambda(1- \lambda)((v,v) - 2(v,w)+(w,w)) = \lambda(1-\lambda)(v-w,v-w) \\
+		&= \lambda(1-\lambda)\norm{v-w}^2
+		\end{align*}
+		This is exactly the definition with modulus of convexity $\phi(\alpha) = \alpha ^2$.
+		
+	\end{proof}
+\end{lemma}
+
 \begin{theorem} Equivalent formulation as a convex minimization problem\newline
 	A solution $u \in H^1(-1,1)$ of the following minimization problem is a weak solution of \eqref{eq:signorini}:
-	\begin{align} \label{eq:minimization_problem}
-	\begin{split}
-	&\min_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v)	\\
-	F(v) &\coloneqq \int_{-1}^1{\frac{1}{2} (v')^2 + \frac{1}{2} v^2 - fv \dif x}
-	\end{split}
-	\end{align}
+	\begin{equation} \label{eq:minimization_problem}
+	\min_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v)
+	\end{equation}
 	The functional $F$ can be understood as the energy functional. This is a convex problem.
 	\begin{proof}
 	We start with the variational inequality \eqref{eq:variational_inequality}:
@@ -304,23 +325,24 @@ We will now formulate this problem as a convex minimization problem in the Sobol
 	F(v) \geq F(u) \quad \forall v \in K 
 	\quad \Longleftrightarrow \quad u = \argmin_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v)
 	\end{equation*}
-	We will now prove the convexity of $F$, to this avail let $\alpha \in (0,1)$. We will start by showing that it is a sublinear functional:
-	\begin{align}\label{eq:F_sublinear_functional}
-	\begin{split}
-	F(\alpha v) &= \int_{-1}^{1} \alpha^2 \left(\frac{1}{2}(v')^2 + \frac{1}{2}v^2 \right) - \alpha f v \dif x \\
-	&= \alpha \int_{-1}^{1} \alpha \left(\frac{1}{2}(v')^2 + \frac{1}{2}v^2 \right) - f v \dif x \leq \alpha F(v)
-	\end{split}
-	\end{align}
-	With this the convexity follows:
-	\begin{align}\label{eq:F_convex}
-	\begin{split}
-	F((1-\alpha)v + \alpha u) &= \int_{-1}^1 \frac{1}{2}((1-\alpha)v')^2 + \frac{1}{2}(\alpha u')^2 - (1-\alpha)\alpha v'u' \\
-	& \phantom{= \int_{-1}^1 {}\,\,} \frac{1}{2}((1-\alpha)v)^2 + \frac{1}{2}(\alpha u)^2 - (1-\alpha)\alpha vu \\
-	& \phantom{= \int_{-1}^1 {}\,\,} f(1-\alpha)v - f(\alpha u) \dif x \\
-	&= F((1-\alpha)v) + F(\alpha u) - \underbrace{\int_{-1}^1{(1-\alpha) (\alpha v'u' + \alpha vu) \dif x}}_{\textnormal{\textcolor{red}{QUESTION: $\geq 0$?}}} \\
-	\overset{\eqref{eq:F_sublinear_functional}}&{\leq} (1-\alpha)F(v) + \alpha F(u)
-	\end{split}
-	\end{align}
+	
+	For the other direction of the proof let $u$ be a solution of \eqref{eq:minimization_problem}. As $u$ is a minimizer, it follows for every $t \geq 0$ and every $v \in K$:
+	\begin{equation*}
+	\frac{F(u+t(v-u)) - F(u)}{t} \geq 0
+	\end{equation*}
+	Starting from there, we will derive the variational inequality by taking the limit $t\rightarrow 0$:
+	\begingroup
+	\allowdisplaybreaks
+	\begin{align*}
+	&\lim\limits_{t \rightarrow 0} \frac{1}{t} \Bigg( 
+	\int_{-1}^{1} \frac{1}{2} (u'+t(v'-u'))^2 + \frac{1}{2} (u+t(v-u))^2 - f(u+t(v-u))\\
+	 &\phantom{\lim\limits_{t \rightarrow 0} \frac{1}{t} \Bigg( 
+		\int_{-1}^{1}} -\frac{1}{2}(u')^2  - \frac{1}{2}u^2 + fu \dif x \Bigg) \\
+	= &\lim\limits_{t \rightarrow 0} \int_{-1}^1 \frac{1}{2} t(v'-u')^2 + u'(v'-u') + \frac{1}{2}t(v-u)^2 + u(v-u) -f(v-u) \dif x \\
+	= & 	\int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K
+	\end{align*}
+	\endgroup
+	This is exactly the required form, and the equivalence of the two formulations follows.
 	\end{proof}
 \end{theorem}
 
@@ -342,18 +364,197 @@ We will now formulate this problem as a convex minimization problem in the Sobol
 		\end{equation*}
 		The infimal sequence is bounded and therefore also the functional. Now we will use the Functional Analysis result, that a bounded sequence in a Hilbert Space has a weakly convergent subsequence. This can be found for example in Royden and Fitzpatrick \cite[Chapter 16, Theorem 6]{royden2010real}. On top of that, we use that a convex, continuous functional is weakly lower semi-continuous, as can be found in Kurdila and Zabarankin \cite[Theorem 7.2.5]{kurdila2005convex}. 
 		
-		\textcolor{red}{QUESTION: We never proved that the functional is continuous. I am guessing this is not completely trivial, as it is not linear. How do I approach this?}
-		
 		Let $\{\tilde{v}_n\}_{n\in \mathbb{N}} $ be the weakly convergent subsequence such that $\tilde{v}_n \rightharpoonup u$. Then the claim follows, by definition of weak convergence and lower semi-continuity:
 		\begin{equation*}
 		\inf_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v) =  \liminf\limits_{n\rightarrow\infty} F(\tilde{v}_n) \geq F(u)
 		\end{equation*}
+		
+		The uniqueness of the solution follows from the strict convexity of the functional \cite{aubin79}.
 	\end{proof}
 \end{theorem}
 
 
 
-\chapter{Kapitel 3}
+\chapter{Discretization}
+We will now consider a discretization of the Signorini Problem. To that end, we will restrict the solution space to $V_h \coloneqq \{z \in C([-1,1]) \, | \, z \,\, \text{piecewise affine subordinate to a partition} \,\, 1=t_0<t_1<\dots<t_N = 1 \}$. Furthermore, we will assume a uniform partition with $h = t_{i+1} - t_i$.
+
+\begin{definition} The Discrete Signorini Problem \newline
+	Using this discretization, \eqref{eq:minimization_problem} turns into:
+	\begin{equation} \label{discrete_minimization}
+	\min_{\substack{v_h \in V_h \\ v_h(-1) \geq 0,\, v_h(1) \geq 0}} F(v_h) = \min_{\substack{v_h \in V_h \\ v_h(-1) \geq 0,\, v_h(1) \geq 0}} \int_{-1}^1{\frac{1}{2} (v_h')^2 + \frac{1}{2} v_h^2 - fv_h \dif x} 
+	\end{equation}
+\end{definition}
+
+We could use the same techniques from the previous section to show that this problem always admits a unique solution. However, it will be much more obvious if we rewrite it in the usual finite dimensional form. This will also be the form used to implement a solver.
+
+\begin{lemma} Matrix Formulation of the Discrete Problem \newline
+		The above problem \eqref{discrete_minimization} is equivalent to:
+		\begin{equation}
+		\min_{\substack{\mathbf{v} \in \mathbb{R}^{(N+1)\times(N+1)}}} \frac{1}{2} \mathbf{v}^T (B_1 + B_2) \mathbf{v} - \mathbf{f}^T  \mathbf{v}
+		\end{equation}
+		Where $B_1$ and $B_2$ are fixed positive definite matrices, and $\mathbf{f} \in \mathbb{R}^{(N+1)\times(N+1)}$ depends on the choice of $f$. We call $B_1$ the \textit{mass matrix} and $B_2$ the \textit{stiffness matrix}.
+		
+		\begin{proof}
+			Firstly, we define a basis for $V_h$, which are the piecewise linear functions with a bump in the nodes:
+			\begin{align*}
+				V_h = \mathrm{span}\,\Phi_h &= \mathrm{span}\{\varphi_i^h \,|\, i \in \{0,\dots,N\}\} \\
+				\varphi_i^h (x) &= \begin{cases}
+				\frac{x-x_{i-1}}{h} & \text{if} \quad x\in [x_{i-1},x_i] \\
+				\frac{x_{i+1}-x}{h} & \text{if} \quad  x\in [x_i,x_{i+1}] \\
+				0 & \text{if} \quad  \abs{x-x_i} > h
+				\end{cases}
+			\end{align*}
+			Using this basis, we represent $v_h$ as a linear combination of the basis functions and define $\mathbf{v}$ as the corresponding coefficient vector:
+			\begin{equation*}
+			v_h(x) = \sum_{i=1}^{N} \mathbf{v}_i \varphi_i^h(x)
+			\end{equation*}
+			We will analyze \eqref{discrete_minimization} in three parts. For the mass and stiffness matrices we will decompose the integration interval into the intervals $[t_{i-1},t_i]$, so that we can consider only the two basis functions corresponding to the left and right node of the interval:
+			\begin{align*}
+				\int_{-1}^1 v_h^2 \dif x &= \sum_{i=1}^{N} \int_{t_{i-1}}^{t_i} (\mathbf{v}_i \varphi_i + \mathbf{v}_{i-1} \varphi_{i-1})^2 \dif x\\
+				&= \sum_{i=1}^{N} \int_{t_{i-1}}^{t_i} \left(\frac{x-x_{i-1}}{h}\mathbf{v}_i + \frac{x_i-x}{h}\mathbf{v}_{i-1}\right)^2 \dif x \\
+				&= \sum_{i=1}^{N} \int_{t_{i-1}}^{t_i} \left(\frac{x-x_{i-1}}{h}\right)^2 \mathbf{v}_i^2 + 2\left(\frac{x-x_{i-1}}{h}\right) \mathbf{v}_i \left(\frac{x_i-x}{h}\right) \mathbf{v}_{i-1} + \left(\frac{x_i-x}{h}\right)^2 \mathbf{v}_{i-1}^2 \dif x \\
+				&= \sum_{i=1}^{N} \frac{1}{3}h \mathbf{v}_i^2 + 2\frac{1}{6}h\mathbf{v}_i \mathbf{v}_{i-1} + \frac{1}{3} h \mathbf{v}_{i-1}^2 \\
+				&= h \begin{pmatrix}
+					\mathbf{v}_0 \\					
+					\mathbf{v}_1 \\
+					\vdots \\
+					\mathbf{v}_N 
+				\end{pmatrix}^T
+				\begin{pmatrix}
+				1/3& 1/6 & & & & & \\
+				1/6& 2/3& 1/6 & & & & \\
+				& 1/6& 2/3& 1/6 & & & \\
+				& & & \ddots & & & \\
+				& & & 1/6& 2/3& 1/6 & \\
+				& & & & 1/6& 2/3& 1/6 \\
+				& & & & & 1/6& 1/3
+				\end{pmatrix}
+				\begin{pmatrix}
+				\mathbf{v}_0 \\					
+				\mathbf{v}_1 \\
+				\vdots \\
+				\mathbf{v}_N 
+				\end{pmatrix} = \mathbf{v}^T B_1 \mathbf{v}
+			\end{align*}
+			We proceed similarly for the stiffness matrix, here deriving the two basis functions before integrating $v_h$:
+			\begin{align*}
+			\int_{-1}^1 (v_h')^2 \dif x &= \sum_{i=1}^{N} \int_{t_{i-1}}^{t_i} \left(\frac{x_i-x_{i-1}}{h}\right)^2 \dif x \\
+			&= \sum_{i=1}^{N} \frac{1}{h} \mathbf{v}_i^2 - 2\frac{1}{h} \mathbf{v}_i\mathbf{v}_{i-1} + \frac{1}{h}\mathbf{v}_{i-1}^2 \\
+			&= \frac{1}{h} 
+			\begin{pmatrix}
+			\mathbf{v}_0 \\					
+			\mathbf{v}_1 \\
+			\vdots \\
+			\mathbf{v}_N 
+			\end{pmatrix}^T
+			\begin{pmatrix}
+			1& -1 & & & & & \\
+			-1& 2& -1 & & & & \\
+			& -1& 2& -1 & & & \\
+			& & & \ddots & & & \\
+			& & & -1& 2& -1 & \\
+			& & & & -1& 2& -1 \\
+			& & & & & -1& 1
+			\end{pmatrix}
+			\begin{pmatrix}
+			\mathbf{v}_0 \\					
+			\mathbf{v}_1 \\
+			\vdots \\
+			\mathbf{v}_N 
+			\end{pmatrix} = \mathbf{v}^T B_2 \mathbf{v}
+			\end{align*}
+			Finally, we derive the vector $\mathbf{f}$, for which we will use the linearity of $v_h$ in the third part of \eqref{discrete_minimization}:
+			\begin{align*}
+				\int_{-1}^1 fv_h \dif x &= \int_{-1}^1 f \sum_{i=0}^{N} \mathbf{v}_i \varphi_i^h \dif x \\
+				&= \sum_{i=0}^{N} \mathbf{v}_i \left(\int_{-1}^1 f\varphi_i^h\dif x\right) = \mathbf{f}^T \mathbf{v}
+			\end{align*}
+		\end{proof}
+\end{lemma}
+
+\begin{corollary} Existence and Uniqueness of the Discrete Solution \newline
+	The discrete probelm \eqref{discrete_minimization} always has a unique solution.
+	\begin{proof}
+		This follows directly from the previous lemma, as $B_1 + B_2$ is a positive definite matrix. The proof of this result can be found in standard literature, such as \cite{ulbrich2012nichtlineare}.
+	\end{proof}
+\end{corollary}
+
+\chapter{Error Estimates}
+The goal of this chapter is to analyze how good the solution to the discrete problem \eqref{discrete_minimization} approximates the solution of the continuous one \eqref{eq:minimization_problem}. We will analyze the convergence order as a function of the mesh width $h$ with respect to several norms, and show that it is the optimal a-priori result \textcolor{red}{QUESTION: Reference?}.
+
+\section{The Ritz Projection}
+In order to analyze the discreitzation error, it comes naturally to mind to estimate it by the least possible distance to a finite element function, by means of the Ritz Projection, and using the triangle inequality, subsequently to the solution of the discrete problem.
+
+\begin{definition} The Ritz Projection \newline
+	The Ritz Projection $R_h : H^1(\Omega) \rightarrow V_h$ is the orthogonal projection from $H^1(\Omega)$ to the subspace $V_h$, as uniquely defined by:
+	\begin{equation}\label{eq:Ritz_Projection}
+	(u-R_h(u), v_h)_{H_1} = 0 \quad \forall v_h \in V_h
+	\end{equation}
+	Because of the orthogonality, $R_h(u)$ is the solution to the following minimization problem:
+	\begin{equation}\label{eq:ritz_minimization}
+	R_h(u) = \argmin_{\substack{v_h \in V_h}} \norm{v_h - u}_{H_1}
+	\end{equation}
+\end{definition}
+We will therefore derive an upper bound for the error between the Ritz Projection of the solution $u$ and the discrete solution $v_h$. To that avail, following the lines of \cite{2019christof}, we will firstly formulate the Ritz Projection in a way that links it to the solution of the Signorini Problem:
+
+\begin{lemma} Ritz Projection of a Signorini Solution \newline
+	Suppose that $u$ solves \eqref{eq:variational_inequality} for some $f \in L^2(\Omega)$. Then, $R_h(u)$ is the unique solution $u_h$ of the following variational inequality:
+	\begin{equation}\label{eq:ritz_variational}
+	(\tilde{u}_h, v_h-\tilde{u}_h)_{H^1(\Omega)} \geq (f, v_h-\tilde{u}_h)_{L^2(\Omega)} \quad \forall v_h \in \tilde{K}_h
+	\end{equation}
+	where $\tilde{K}_h$ is defined as follows:
+	\begin{align*}
+	\tilde{K}_h \coloneqq \{v_h \in V_h \,|\,  v_h(1) &\geq (R_h(u) - u)(1) \quad \text{and} \\
+	 v_h(-1) &\geq (R_h(u) - u)(-1)\}
+	\end{align*}
+	\begin{proof}
+		The variatonal inequality \eqref{eq:ritz_variational} admits a unique solution. This can be found in the literature about variational inequalities, for example in \cite{2000vareqhilbert}. To show that this is indeed $R_h(u)$, note that $R_h(u) \in \tilde{K}_h$, as $u$ is nonnegative in $\partial\Omega$. It therefore suffices to show that $R_h(u)$ fulfills the inequality. Let $v_h \in \tilde{K}_h$, then:
+		\begin{align*}
+		(R_h(u), v_h - R_h(u))_{H^1(\Omega)} \overset{\eqref{eq:Ritz_Projection}}&{=} (u, v_h - R_h(u))_{H^1(\Omega)} \\
+		&= (u, v_h - R_h(u) + u - u)_{H^1(\Omega)} \\
+		\overset{\eqref{eq:variational_inequality}}&{\geq} (f, v_h - R_h(u) + u - u)_{L^2(\Omega)} \\
+		&= (f, v_h - R_h(u))_{L^2(\Omega)}
+		\end{align*}
+	\end{proof}
+\end{lemma}
+
+With this representation we can conclude the following supercloseness result: \textcolor{red}{QUESTION: What does supercloseness here mean exactly?}
+
+\begin{lemma} Supercloseness \newline
+	Let $f\in L^2(\Omega)$, $u$ the solution of \eqref{eq:variational_inequality} and $u_h$ the solution of \eqref{discrete_minimization}. Then the $H^1$-error between $u_h$ and the Ritz Projection of $u$ is bounded as follows:
+	\begin{equation}\label{eq:supercloseness}
+	\norm{u_h - R_h(u)}_{H^1(\Omega)} \leq C \max \left(\abs{(u-R_h(u))(-1)}, \abs{(u-R_h(u))(1)}\right)
+	\end{equation}
+	for a fixed $C$.
+	\begin{proof}
+		We will show this claim in the following, slightly different form: \textcolor{red}{QUESTION: Why does the claim follow from this? I have some ideas, but maybe you can give me a hint. Does it have to do with Lemma 3.5? Which part should I look at?}
+		\begin{equation*}
+		\norm{u_h - R_h(u)}_{H^1(\Omega)} \leq \inf \left\{
+		\norm{w_h}_{H^1(\Omega)} \,\big|\, w_h \in V_h, \quad (R_h(u) - u)(\pm 1) \leq w_h(\pm 1) \leq R_h(u)(\pm 1)
+		 \right\}
+		\end{equation*}
+		Let $w_h$ be in the feasible set of the right hand side (which is necessarily non-empty, since it contains $R_h(u)$). This $w_h$ is contained in $\tilde{K}_h$, which yields, as $R_h(u)$ is the solution of \eqref{eq:ritz_variational}:
+		\begin{equation*}
+		(R_h(u), v_h - R_h(u))_{H^1(\Omega)} \geq (f, v_h - R_h(u))_{L^2(\Omega)}
+		\end{equation*}
+		for all $v_h \in \tilde{K}_h$, in particular for all $v_h \in \tilde{K}_h$ with $v_h(\pm 1) \geq w_h(\pm 1)$. In particular, we may choose $v_h \coloneqq u_h + w_h$, and obtain:
+		\begin{equation*}
+		(R_h(u), R_h(u)-u_h)_{H^1(\Omega)} \leq (R_h(u),w_h)_{H^1(\Omega)} + (f,R_h(u)-u_h-w_h)_{L^2(\Omega)}
+		\end{equation*}
+		On the other hand, we also know that $R_h(u)-w_h \geq R_h(u) - R_h(u) = 0$ on $\partial\Omega = \{\pm 1\}$. Thus, we can also choose $v_h \coloneqq R_h(u) - w_h$ as a test function and obtain:
+		\begin{equation*}
+		(u_h, u_h-R_h(u))_{H^1(\Omega)} \leq (u_h,-w_h)_{H^1(\Omega)} + (f,u_h + w_h - R_h(u))_{L^2(\Omega)}
+		\end{equation*}		
+		We may now add both inequalities to obtain:
+		\begin{equation*}
+		\norm{R_h(u)-u_h}^2_{H^1(\Omega)} \leq (R_h(u)-u_h, w_h)_{H^1(\Omega)}
+		\end{equation*}
+		As $w_h$ was an arbitrary function from the feasible set of which the infimum is taken, the claim follows.
+	\end{proof}
+\end{lemma}
+
+\chapter{Implementation in Matlab}
+\section{Methods}
+
 \chapter{Anhang}
 
 \printbibliography{}
