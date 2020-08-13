@@ -436,7 +436,7 @@ We could use the same techniques from the previous section to show that this pro
 				\mathbf{v}_N 
 				\end{pmatrix} = \mathbf{v}^T B_1 \mathbf{v}
 			\end{align*}
-			We proceed similarly for the stiffness matrix, here deriving the two basis functions before integrating $v_h$:
+			We proceed similarly for the stiffness matrix, here differentiating the two basis functions before integrating $v_h$:
 			\begin{align*}
 			\int_{-1}^1 (v_h')^2 \dif x &= \sum_{i=1}^{N} \int_{t_{i-1}}^{t_i} \left(\frac{x_i-x_{i-1}}{h}\right)^2 \dif x \\
 			&= \sum_{i=1}^{N} \frac{1}{h} \mathbf{v}_i^2 - 2\frac{1}{h} \mathbf{v}_i\mathbf{v}_{i-1} + \frac{1}{h}\mathbf{v}_{i-1}^2 \\
@@ -482,7 +482,7 @@ We could use the same techniques from the previous section to show that this pro
 The goal of this chapter is to analyze how good the solution to the discrete problem \eqref{discrete_minimization} approximates the solution of the continuous one \eqref{eq:minimization_problem}. We will analyze the convergence order as a function of the mesh width $h$ with respect to several norms, and show that it is the optimal a-priori result \textcolor{red}{QUESTION: Reference?}.
 
 \section{The Ritz Projection}
-In order to analyze the discreitzation error, it comes naturally to mind to estimate it by the least possible distance to a finite element function, by means of the Ritz Projection, and using the triangle inequality, subsequently to the solution of the discrete problem.
+In order to analyze the discretization error, it comes naturally to mind to estimate it by the least possible distance to a finite element function, by means of the Ritz Projection, and using the triangle inequality, subsequently to the solution of the discrete problem.
 
 \begin{definition} The Ritz Projection \newline
 	The Ritz Projection $R_h : H^1(\Omega) \rightarrow V_h$ is the orthogonal projection from $H^1(\Omega)$ to the subspace $V_h$, as uniquely defined by:
@@ -497,7 +497,7 @@ In order to analyze the discreitzation error, it comes naturally to mind to esti
 We will therefore derive an upper bound for the error between the Ritz Projection of the solution $u$ and the discrete solution $v_h$. To that avail, following the lines of \cite{2019christof}, we will firstly formulate the Ritz Projection in a way that links it to the solution of the Signorini Problem:
 
 \begin{lemma} Ritz Projection of a Signorini Solution \newline
-	Suppose that $u$ solves \eqref{eq:variational_inequality} for some $f \in L^2(\Omega)$. Then, $R_h(u)$ is the unique solution $u_h$ of the following variational inequality:
+	Suppose that $u$ solves \eqref{eq:variational_inequality} for some $f \in L^2(\Omega)$. Then, $R_h(u)$ is the unique solution $\tilde{u}_h$ of the following variational inequality:
 	\begin{equation}\label{eq:ritz_variational}
 	(\tilde{u}_h, v_h-\tilde{u}_h)_{H^1(\Omega)} \geq (f, v_h-\tilde{u}_h)_{L^2(\Omega)} \quad \forall v_h \in \tilde{K}_h
 	\end{equation}
