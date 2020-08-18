@@ -8,7 +8,7 @@ function [] = test_solver()
    
    f = @sin;
    
-   signorini_solver(n, basis_quadrature(f, PHI, n))
+   signorini_solver(n, basis_quadrature(f, PHI, n, h))
    
 end
 
