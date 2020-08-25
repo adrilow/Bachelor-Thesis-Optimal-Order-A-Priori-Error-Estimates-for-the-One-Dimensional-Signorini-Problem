@@ -1,6 +1,6 @@
-function [v_h] = signorini_solver(n, f)
+function [v_h] = signorini_solver(n, h, f)
 %This function solves the 1D-Signorini Problem on the interval (-1,1)
-%by a Finite Elements approximation with a mesh width of h=2/n
+%by a Finite Elements approximation with a mesh width of h
 %   The actual problem solved is the following:
 % $$\min \{ F(v_h) \,|\, v_h \in V_h \, v_h(-1) \geq 0,\, v_h(1) \geq 0 \}
 % F(v_h) = \int_{-1}^1\frac{1}{2} (v_h')^2 + \frac{1}{2} v_h^2 - fv_h dx$$
@@ -10,7 +10,6 @@ function [v_h] = signorini_solver(n, f)
 %   The function f is the force. A quadrature of appropriate order
 %   will be used for the rightmost part of the functional.
 
-h = 2/n;
 
 
 B1_diag = (2/3) * ones(n,1);
@@ -27,8 +26,9 @@ B_2 = (1/h) * spdiags([B2_codiag B2_diag B2_codiag], -1:1, n, n);
 
 A_diag = zeros(n);
 A_diag(1) = -1; A_diag(n) = -1;
-b = zeros(n);
-A = full(spdiags([A_diag], 0, n, n));
+b = zeros(n,1);
+A = spdiags(A_diag, 0, n, n);
 
-v_h = quadprog(B1+B2, f, A, b);
+options = optimoptions('quadprog', 'Display', 'off');
+v_h = quadprog(B_1+B_2, f, A, b, [],[],[],[],[],options);
 end
