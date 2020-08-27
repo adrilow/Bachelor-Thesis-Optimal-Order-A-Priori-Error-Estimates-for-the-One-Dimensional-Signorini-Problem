@@ -1,7 +1,6 @@
 function [inf_norms, eoc_inf, L2_norms, eoc_L2, H1_norms, eoc_H1] = test_solver()
    
    f = @sin;
-   
    c1 = -(cos(1)*exp(3) - exp(1)*sin(1))/(2*(exp(4) + 1));
    c2 = (exp(1)*(cos(1) + exp(2)*sin(1)))/(2*(exp(4) + 1));
    sol = @(x) c1*exp(x) + c2*exp(-x) + sin(x)/2;
@@ -16,33 +15,35 @@ function [inf_norms, eoc_inf, L2_norms, eoc_L2, H1_norms, eoc_H1] = test_solver(
    eoc_H1       = zeros(iterations,1);
    
    for i = 1:iterations
-       n = 100 + (100*(i-1));
-       h = 2/(n-1);
-       v_h = signorini_solver(n, h, basis_quadrature(f, n, h));
+%        n = 10 + (10*(i-1));
+%        h = 2/(n-1);
+%        h_prev = (2/(n-10-1));
+%        meshw = 0.001;
+       h = 2^(-i);
+       n = 2^(i+1) + 1;
+       h_prev = 2^(-(i-1));
+       meshw = 1/2048;
        
-%           meshw = 0.001;       % step size
-%           X = -1:meshw:1;    % domain
-%           f = sol(-X);      % range
-%           Y = diff(f)/meshw;   % first derivative
-%           f2 = fe_function(v_h,h,X);
-%           Y2 = fe_function_prime(v_h,h,X);
-%           plot(X(:,1:length(Y)),Y,X,f,X,f2,X,Y2)
+       [v_h,~,~] = signorini_solver(n, h, basis_quadrature(f, n, h));
+       
+
+%           X1 = -1:meshw:1;    % domain
+%           f1 = sol(-X1);      % range
+%           Y1 = diff(f1)/meshw;   % first derivative
+%           f2 = fe_function(v_h,h,X1);
+%           Y2 = fe_function_prime(v_h,h,X1);
+%           plot(X1(:,1:length(Y1)),Y1,X1,f1,X1,f2,X1,Y2)
        
        inf_norms(i) = inf_norm(v_h,h,sol);
        L2_norms(i)  = L2_norm(h,n,@(x) fe_function(v_h,h,x),sol);
        H1_norms(i)  = H1_norm(h,n,@(x) fe_function(v_h,h,x),sol,@(x) fe_function_prime(v_h,h,x),solp);
        if (i > 1)
-           eoc_inf(i) = EOC(inf_norms(i), inf_norms(i-1), h, (2/(n-100-1)));
-           eoc_L2(i) = EOC(L2_norms(i), L2_norms(i-1), h, (2/(n-100-1)));
-           eoc_H1(i) = EOC(H1_norms(i), H1_norms(i-1), h, (2/(n-100-1)));
+           eoc_inf(i) = EOC(inf_norms(i), inf_norms(i-1), h, h_prev);
+           eoc_L2(i) = EOC(L2_norms(i), L2_norms(i-1), h, h_prev);
+           eoc_H1(i) = EOC(H1_norms(i), H1_norms(i-1), h, h_prev);
        end
-       %, x, 0.25.*fe_phi(0,h,x), x, 0.25.*fe_phi(1,h,x)
        
    end
-end
-
-function [EOC] = EOC(norm, norm_prev, h, h_prev)
-    EOC = (log(norm) - log(norm_prev)) / (log(h) - log(h_prev));
 end
 
 function [norm] = inf_norm(v_h, h, sol)

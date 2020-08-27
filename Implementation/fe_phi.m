@@ -7,10 +7,10 @@ t_ip1 = -1 + ((i+1)*h);
 
 y = zeros(size(x));
 
-ind1 = (x >= t_im1) & (x <= t_i);
+ind1 = (x >= t_im1) & (x < t_i);
 y(ind1) = (x(ind1) -  t_im1)/h;
 
-ind2 = (x>= t_i) & (x <= t_ip1);
+ind2 = (x>= t_i) & (x < t_ip1);
 y(ind2) = (t_ip1 - x(ind2))/h; 
 
 

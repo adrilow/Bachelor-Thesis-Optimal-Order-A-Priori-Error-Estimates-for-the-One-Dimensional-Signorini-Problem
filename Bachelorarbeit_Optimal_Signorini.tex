@@ -1,3 +1,4 @@
+% !TeX spellcheck = en_US 
 %\documentclass[headsepline,footsepline,footinclude=false,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc,BCOR=12mm,DIV=12]{scrbook} % two-sided
 \documentclass[headsepline,footsepline,footinclude=false,oneside,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc]{scrbook} % one-sided
 
@@ -195,18 +196,19 @@ Zitate aus B\"uchern werden so gemacht, siehe in \cite{schoenbucher03} oder \cit
 \end{definition}
 
 \begin{definition}One Dimensional Sobolev-Spaces \newline
-	Let $p\in [1,\infty]$. For $k \in \mathbb{N}_0$ and $p \in \mathbb{N}$, the Sobolev-Space $W^{k,p}(a,b)$ is defined as follows:
+	Let $p\in [1,\infty]$. For $k \in \mathbb{N}_0$, the Sobolev-Space $W^{k,p}(a,b)$ is defined as follows:
 	\begin{align}
 	\begin{split}
 	W^{0,p}(a,b) &\coloneqq L^p(a,b) \\
 	W^{k,p}(a,b) &\coloneqq \big\{ v \in W^{k-1,p}(a,b) \,|\, \exists w \in W^{k-1,p}(a,b), c\in\mathbb{R}. \\
-	& \phantom{\coloneqq \big\{\,\,} v(t) =  c + \int_a^t w(\tau) \dif \tau \quad \mathit{f.a.a.} \, t\in (a,b)  \big\}
+	& \phantom{\coloneqq \big\{\,\,} v(t) =  c + \int_a^t w(\tau) \dif \tau \quad \text{f.a.a.} \,\, t\in (a,b)  \big\}
 	\end{split}
 	\end{align}
-	For $v\in W^{k,p}$ the function $w$ in the definition is called the weak derivative of $v$, and in this context the notation $v' \coloneqq w$ is useful. One can naturally expand this notation to the $k$th weak derivative $v^{(k)}$.
+	For $v\in W^{k,p}$ the function $w$ in the definition is called the weak derivative of $v$, and in this context the notation $v' \coloneqq w$ is useful. Because of the Fundamental Theorem of Calculus, one can easily see that if $v$ has a classical derivative, then it coincides with the weak one. One can naturally expand this notation to the $k$th weak derivative $v^{(k)}$.
+	
 	$W^{k,p}(a,b)$ is a Banach Space with the following norm:
 	\begin{equation}
-	\norm{v}_{W^{k,p}(a,b)} \coloneqq \left(\sum\limits_{i = 0}^k \norm{v^{(i)}}_{L^p(a,b)}^p\right)^{1/p}
+	\norm{v}_{W^{k,p}(a,b)} \coloneqq \left(\sum\limits_{i = 0}^k \norm{v^{(i)}}_{L^p(a,b)}^p\right)^{1/p} \label{eq:sobolev1_norm}
 	\end{equation}
 	In the case of $p=2$ the notation $H^k(a,b) \coloneqq W^{k,2}(a,b)$ is used. This space is a Hilbert Space with the following inner product:
 	\begin{equation}
@@ -215,7 +217,27 @@ Zitate aus B\"uchern werden so gemacht, siehe in \cite{schoenbucher03} oder \cit
 	These results can be found in the literature, for example in Mitrović and Žubrinić \cite[Chapter 5, Section 2, Remark 2]{mitrovic1997fundamentals}.
 \end{definition}
 
-According to this definition, the Sobolev-Spaces are subspaces of the $L^p$-spaces, therefore their elements are equivalence classes of Lebesgue-almost everywhere equal functions. In order to formulate the Signorini Problem weakly, we however need to enforce the boundary conditions, which are defined on the two points of $\partial \Omega$. We will show that in the case of $H^k(a,b)$, there is always a canonical representative in $C^{k-1}([a,b])$.
+This definition of the Sobolev Spaces, although the most simple, is not the one most commonly found in the literature. The usual way to define a weak derivative, and therefore the Sobolev Spaces is through testing with infinitely differentiable functions with compact support. This alternative definition will be useful down the line, as it is very analogous to the variational inequalities we will be considering:
+
+\begin{lemma} Equivalent Characterization of the Sobolev Spaces \newline
+	Let $C_c^\infty(a,b)$ be the space of the infinitely differentiable functions with compact support inside $(a,b)$. Note that this implies that these functions disappear on the boundary. Let $k \in \mathbb{N}_0$. Let $v$ be a locally integrable function. A locally integrable function $w$, which fulfills:
+	\begin{equation} \label{eq:weak_derivative_through_testing}
+	\int_a^b u \varphi^{(k)} \dif x = \int_a^b w \varphi \dif x \quad \forall \varphi \in C_c^\infty(a,b)
+	\end{equation}
+	or, equivalently:
+	\begin{equation}
+		(u,\varphi^{(k)})_{L^2(a,b)} = (w,\varphi)_{L^2(a,b)} \quad \forall \varphi \in C_c^\infty(a,b)
+	\end{equation}
+	is the $k$th weak derivative of $v$, i.e. $v^{(k)} = w$. With this definition one can also see through partial integration that in the case that a classical derivative exists, it is also the weak derivative.
+	
+	 furthermore $p\in [1,\infty]$. For $k \in \mathbb{N}_0$ and $p \in \mathbb{N}$, the Sobolev Space $W^{k,p}(a,b)$ is the space of all $L^p(a,b)$-functions whose $i$th partial derivative, defined in the above sense, has a finite $L^p$-norm, for all $i \in \{0,\dots,k\}$. 
+	
+	
+	Again, this definition can be found in the literature, for example in Kurdilla and Zabarankin \cite[Definition 3.2.3]{kurdila2005convex}.
+\end{lemma}
+
+The Sobolev Spaces are subspaces of the $L^p$-spaces, therefore their elements are equivalence classes of Lebesgue-almost everywhere equal functions. In order to formulate the Signorini Problem weakly, we however need to enforce the boundary conditions, which are defined on the two points of $\partial \Omega$. We will show that in the case of $H^k(a,b)$, there is always a canonical representative in $C^{k-1}([a,b])$.
+
 
 \begin{lemma}\thlabel{thm:sobolev_embedding_1} Sobolev Embedding for $H^1(a,b)$ \newline
 	For every $u \in H^1(a,b)$ there exists a $v \in C^{0,\frac{1}{2}}([a,b])$, where $C^{0,\frac{1}{2}}$ is a Hölder-Space with Hölder-continuity constant $\frac{1}{2}$, such that $u = [v \vert_{(a,b)}]$. As an embedding, this can be written as:
@@ -347,9 +369,9 @@ We will now formulate this problem as a convex minimization problem in the Sobol
 \end{theorem}
 
 \begin{theorem}\thlabel{thm:unique_solution_signorini} Existence of a unique solution to the Signorini Problem \newline
-	The weak formulation of the Signorini Problem \eqref{eq:minimization_problem} has a unique solution $u \in H^2(-1,1)$
+	The weak formulation of the Signorini Problem \eqref{eq:minimization_problem} has a unique solution $u \in H^1(-1,1)$
 	\begin{proof}
-		We will prove this using the Direct Method in the Calculus of Variations. In a first step, we will show that the functional $F$ is bounded from below. To this avail define $\{v_n\}_{n\in \mathbb{N}} \subset H^1(-1,1)$ such that: 
+		We will prove this using the Direct Method in the Calculus of Variations. In a first step, we will show that the functional $F$ is bounded from below. To this avail define $\{v_n\}_{n\in \mathbb{N}} \subset H^1(\Omega)$ such that: 
 		\begin{equation*}
 		v_n(\pm 1) \geq 0\textnormal{,} \quad \lim\limits_{n \rightarrow \infty} F(v_n) = \inf_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v)
 		\end{equation*} 
@@ -359,9 +381,9 @@ We will now formulate this problem as a convex minimization problem in the Sobol
 		&\geq \frac{1}{2}\norm{v_n}_{H^1}^2 - \frac{1}{4} \norm{v_n}_{L^2}^2 - 4 \norm{f}_{L^2}^2 \\
 		&\geq \frac{1}{4} \norm{v_n}_{H^1}^2 - 4 \norm{f}_{L^2}^2
 		\end{align*}
-		\begin{equation*}
+		\begin{equation} \label{eq:H1_bound_by_f}
 		\Longrightarrow \norm{v_n}_{H^1}^2 \leq 4\left(C + 4 \norm{f}_{L^2}^2\right) \eqqcolon \tilde{C}
-		\end{equation*}
+		\end{equation}
 		The infimal sequence is bounded and therefore also the functional. Now we will use the Functional Analysis result, that a bounded sequence in a Hilbert Space has a weakly convergent subsequence. This can be found for example in Royden and Fitzpatrick \cite[Chapter 16, Theorem 6]{royden2010real}. On top of that, we use that a convex, continuous functional is weakly lower semi-continuous, as can be found in Kurdila and Zabarankin \cite[Theorem 7.2.5]{kurdila2005convex}. 
 		
 		Let $\{\tilde{v}_n\}_{n\in \mathbb{N}} $ be the weakly convergent subsequence such that $\tilde{v}_n \rightharpoonup u$. Then the claim follows, by definition of weak convergence and lower semi-continuity:
@@ -373,10 +395,43 @@ We will now formulate this problem as a convex minimization problem in the Sobol
 	\end{proof}
 \end{theorem}
 
+Now we will see that without any further assumptions, the weak solution to the Signorini Problem is actually in $H^2$ and its norm is bound by the right hand side $f$.
+
+\begin{theorem} $H^2$-regularity of the solution to the Signorini Problem \newline
+	Let $u \in H^1(\Omega)$ be the solution to \eqref{eq:minimization_problem}. Then the following holds:
+	\begin{align}
+		u &\in H^2(\Omega) \label{eq:H2_regularity} \\
+		\norm{u}_{H^2(\Omega)} &\leq C\norm{f}_{L^2(\Omega)} \label{eq:H2_norm_bound_by_f} 
+	\end{align}
+	for $C \in \mathbb{R}_{>0}$.
+	\begin{proof}
+		$u \in H^1(\Omega)$ be the solution to \eqref{eq:minimization_problem}. Then it is also the solution of \eqref{eq:variational_inequality} and therefore fulfills the following:
+		\begin{equation*}
+		(u,v-u)_{H^1(\Omega)} \geq (f,v-u)_{L^2(\Omega)} \quad \forall v \in K
+		\end{equation*}
+		Let $\varphi \in C_c^\infty(\Omega)$, and let $v_1 = u + \varphi$ and $v_2 = u - \varphi$. Since $u$ is a solution and therefore fulfills the boundary conditions and $\varphi$ disappears on the boundary, $v_1,v_2 \in K$. Testing with both in the variational inequality, as $\varphi$ was arbitrary, yields the following:
+		\begin{equation*}
+			(u, \varphi)_{H^1(\Omega)} = (f, \varphi)_{L^2(\Omega)} \quad \forall \varphi \in C_c^\infty(\Omega)
+		\end{equation*}
+		We will transform this to get the characterization of $H^2$-regularity \eqref{eq:weak_derivative_through_testing}:
+		\begin{align*}
+		&(u,\varphi)_{H^1(\Omega)} \overset{\eqref{eq:sobolev1_inner_product}}{=} (u,\varphi)_{L^2(\Omega)} + (u',\varphi')_{L^2(\Omega)} = (f, \varphi)_{L^2(\Omega)} \quad \forall \varphi \in C_c^\infty(\Omega) \\
+		\Longleftrightarrow \quad &(u',\varphi')_{L^2(\Omega)} = (f-u,\varphi)_{L^2(\Omega)} \quad \forall \varphi \in C_c^\infty(\Omega)
+		\end{align*}
+		Which means that $u' \in H^1(\Omega)$, with $(u')' = f-z$, implying $u \in H^2(\Omega)$.
+		
+		Using $u'' = f-z$, the characterizing equation of the weak derivative and \eqref{eq:H1_bound_by_f} we obtain:
+		\begin{align*}
+			\norm{u}_{H^2(\Omega)}\overset{\eqref{eq:sobolev1_norm}}&{=} \norm{u}_{H^1(\Omega)} + \norm{u''}_{L^2(\Omega)} \\ 
+			\overset{\substack{\text{Cauchy} \\ \text{Schwarz}}}&{\leq} 2\norm{u}_{H^1(\Omega)} + \norm{f}_{L^2(\Omega)} \\
+			&\overset{\eqref{eq:H1_bound_by_f}}{\leq} C \norm{f}_{L^2(\Omega)}
+		\end{align*}
+	\end{proof}
+\end{theorem}
 
 
 \chapter{Discretization}
-We will now consider a discretization of the Signorini Problem. To that end, we will restrict the solution space to $V_h \coloneqq \{z \in C([-1,1]) \, | \, z \,\, \text{piecewise affine subordinate to a partition} \,\, 1=t_0<t_1<\dots<t_N = 1 \}$. Furthermore, we will assume a uniform partition with $h = t_{i+1} - t_i$.
+We will now consider a discretization of the Signorini Problem. To that end, we will restrict the solution space to $V_h \coloneqq \{z \in C([-1,1]) \, | \, z \,\, \text{piecewise affine subordinate to a partition} \\ \mathmbox{-1}=x_0<x_1<\dots<x_N = 1 \}$. Furthermore, we will assume a uniform partition with $h = x_{i+1} - x_i$.
 
 \begin{definition} Finite Element Space
 We define a basis for the finite element space $V_h$, which are the piecewise linear functions with a bump in the nodes:
@@ -511,7 +566,9 @@ We could use the same techniques from the previous section to show that this pro
 \end{corollary}
 
 \chapter{Error Estimates}
-The goal of this chapter is to analyze how good the solution to the discrete problem \eqref{eq:discrete_minimization} approximates the solution of the continuous one \eqref{eq:minimization_problem}. We will analyze the convergence order as a function of the mesh width $h$ with respect to several norms, and show that it is the optimal a-priori result \textcolor{red}{QUESTION: Reference?}.
+The goal of this chapter is to analyze how good the solution to the discrete problem \eqref{eq:discrete_minimization} approximates the solution of the continuous one \eqref{eq:minimization_problem}. We will analyze the convergence order as a function of the mesh width $h$ with respect to several norms, and show that these convergence orders are optimal, as they are of the same order as the interpolation error for the same equidistant nodes, c.f. \cite{brenner2002mathematical}. 
+
+For the entirety of this chapter, let $u \in H^2(\Omega)$ be the unique solution of \eqref{eq:variational_inequality} for a fixed $f \in L^2(\Omega)$. Furthermore, let $u_h \in V_h$ be the solution of \eqref{eq:discrete_variational_inequality} for the same $f$. Note that this implies that all constants mentioned in the chapter depend on the choice of $f$. Specifically, they all depend on the $L^2$-norm of $f$.
 
 \section{The Ritz Projection}
 In order to analyze the discretization error, it comes naturally to mind to estimate it by the least possible distance to a finite element function, by means of the Ritz Projection, and using the triangle inequality, subsequently to the solution of the discrete problem.
@@ -531,7 +588,7 @@ In order to analyze the discretization error, it comes naturally to mind to esti
 We will therefore derive an upper bound for the error between the Ritz Projection of the solution $u$ and the discrete solution $v_h$. To that avail, following the lines of \cite{2019christof}, we will firstly formulate the Ritz Projection in a way that links it to the solution of the Signorini Problem:
 
 \begin{lemma} Ritz Projection of a Signorini Solution \newline
-	Suppose that $u$ solves \eqref{eq:variational_inequality} for some $f \in L^2(\Omega)$. Then, $R_h(u)$ is the unique solution $\tilde{u}_h$ of the following variational inequality:
+	We define $R_h(u)$ to be the unique solution $\tilde{u}_h$ of the following variational inequality:
 	\begin{equation}\label{eq:ritz_variational}
 	(\tilde{u}_h, v_h-\tilde{u}_h)_{H^1(\Omega)} \geq (f, v_h-\tilde{u}_h)_{L^2(\Omega)} \quad \forall v_h \in \tilde{K}_h
 	\end{equation}
@@ -557,7 +614,7 @@ We will therefore derive an upper bound for the error between the Ritz Projectio
 With this representation we can conclude the following supercloseness result: \textcolor{red}{Insert here some text about supercloseness}
 
 \begin{lemma} Supercloseness Lemma \newline
-	Let $f\in L^2(\Omega)$, $u$ the solution of \eqref{eq:variational_inequality} and $u_h$ the solution of \eqref{eq:discrete_variational_inequality}. Then the $H^1$-error between $u_h$ and the Ritz Projection of $u$ is bounded as follows:
+	The $H^1$-error between $u_h$ and the Ritz Projection of $u$ is bounded as follows:
 	\begin{align} \label{eq:supercloseness_lemma}
 	\begin{split}
 	&\norm{u_h - R_h(u)}_{H^1(\Omega)} \\ &\leq \inf \left\{
@@ -589,9 +646,8 @@ With this representation we can conclude the following supercloseness result: \t
 \begin{corollary} Supercloseness \newline
 	Under the same conditions of the previous lemma, the following bound also holds:
 	\begin{equation}\label{eq:supercloseness}
-	\norm{u_h - R_h(u)}_{H^1(\Omega)} \leq C \max \left(\abs{(u-R_h(u))(-1)}, \abs{(u-R_h(u))(1)}\right)
+	\norm{u_h - R_h(u)}_{H^1(\Omega)} \leq \frac{7}{3} \max \left(\abs{(u-R_h(u))(-1)}, \abs{(u-R_h(u))(1)}\right)
 	\end{equation}
-	for a fixed $C$.
 	\begin{proof}
 		Recall the bound from \eqref{eq:supercloseness_lemma}. Let $w$ be defined as the linear interpolate of $y_0 \coloneqq (R_h(u) - u)(-1)$ and $y_1 \coloneqq (R_h(u) - u)(1)$, which reads:
 		\begin{equation}
@@ -615,15 +671,17 @@ With this representation we can conclude the following supercloseness result: \t
 Firstly we will analyze the $L^{\infty}$ error, which we will subsequently also use to estimate the $H^1$ one.
 
 \begin{definition} Lagrange-Interpolation \newline
-	For a mesh width $h$ and corresponding nodes $1=t_0<t_1<\dots<t_N = 1$, where $h = t_{i+1} - t_i$, the unique interpolating polynomial of degree $N$ of a function $u$ and the nodes is defined as the Lagrange Interpolate $I_h(u)$.
-	
-	The well-definedness and uniqueness can be found in any standard numerics literature, such as \cite[Chapter 7]{NumerischeMathematik1}.
-	
-	\textcolor{red}{QUESTION: Is this the correct Lagrange-Interpolate? Because further down, when using (4.4) and Theorem 4.4.20 from Brenner, we use that $I_h(u) - R_h(u) \in V_h$}
+	For a mesh width $h$ and corresponding nodes $-1=x_0<x_1<\dots<x_N = 1$, where $h = x_{i+1} - x_i$, the Lagrange-Interpolation Operator maps a continuous function to the linear spline interpolating at these nodes. It is uniquely characterized by the value at the nodes $x_i$:
+	\begin{align}
+	\begin{split}
+	I_h : C(\bar{\Omega}) &\rightarrow V_h \\
+	I_h(u)(x_i) &= u(x_i)
+	\end{split}
+	\end{align}
 \end{definition}
 
-\begin{lemma}
-	Let $u$ be the solution of \eqref{eq:variational_inequality}. Then there exists a $C \in \mathbb{R}_{>0}$ such that the following holds:
+\begin{lemma} Bound for the $L^\infty$-error of the Ritz Projection \newline
+	There exists a $C \in \mathbb{R}_{>0}$ such that the following holds:
 	\begin{equation} \label{eq:linfty_error_lemma}
 		\norm{u -R_h(u)}_{L^\infty} \leq Ch^{3/2}\norm{u}_{H^2}
 	\end{equation}
@@ -651,38 +709,43 @@ Firstly we will analyze the $L^{\infty}$ error, which we will subsequently also 
 	\end{proof}
 \end{lemma}
 
-\begin{theorem} $L^\infty$ Error Estimate \newline
-	Let $u$ be the solution of \eqref{eq:variational_inequality} and $u_h$ the solution of \eqref{eq:discrete_variational_inequality}. Then there exists a $C \in \mathbb{R}_{>0}$ such that the following holds:
+\begin{theorem} $L^\infty$ Error Estimate of the Discrete Solution \newline
+	There exists a $C \in \mathbb{R}_{>0}$ such that the following holds:
 	\begin{equation}
-		\norm{u-u_h}_{L^\infty} \leq C h^{3/2}
+		\norm{u-u_h}_{L^\infty(\Omega)} \leq C h^{3/2}
 	\end{equation}
 \begin{proof}
 	As one might imagine from the previous results, we will introduce the Ritz projection through the triangle inequality, and then estimate the error from it to both the continuous and the discrete result:
 	\begin{align*}
-	\norm{u-u_h}_{L^\infty} &\leq \norm{u-R_h(u)}_{L^\infty} + \norm{R_h(u) - u_h}_{L^\infty} \\
-	\overset{\begin{subarray}{c} \text{Norm}	\\	\text{equivalence} \end{subarray}}&{\leq} C_1 \norm{u-R_h(u)}_{H^1(\Omega)} + \norm{R_h(u) - u_h}_{L^\infty} \\
+	\norm{u-u_h}_{L^\infty(\Omega)} &\leq \norm{u-R_h(u)}_{L^\infty(\Omega)} + \norm{R_h(u) - u_h}_{L^\infty(\Omega)} \\
 	\overset{\eqref{eq:supercloseness} \eqref{eq:linfty_error_lemma}}&{\leq} 
-	C_2 h^{3/2}\norm{u}_{H^2} + C_3 \max \left(\abs{(u-R_h(u))(-1)}, \abs{(u-R_h(u))(1)}\right) \\
-	\overset{\text{\textcolor{red}{REF}}}&{\leq} C_2 h^{3/2}\norm{u}_{H^2}  + C_4 h^{3/2} 
+	C_1 h^{3/2}\norm{u}_{H^2(\Omega)} + C_2 \max \left(\abs{(u-R_h(u))(-1)}, \abs{(u-R_h(u))(1)}\right) \\
+	&\leq C_1 h^{3/2}\norm{u}_{H^2(\Omega)} + C_2 \norm{u-R_h(u)}_{L^\infty(\Omega)} \\
+	\overset{\eqref{eq:linfty_error_lemma}}&{\leq} C_1 h^{3/2}\norm{u}_{H^2(\Omega)}  + C_3 h^{3/2} \norm{u}_{H^2(\Omega)}
+	\\
+	\overset{\eqref{eq:H2_norm_bound_by_f}}&{\leq} C h^{3/2} \norm{f}_{L^2(\Omega)}
 	\end{align*}
-	\textcolor{red}{QUESTION: How do I proceed from here?}
+	Since $f$ was fixed, the result follows.
 \end{proof}
 \end{theorem}
 
 The $H^1$ error follows directly from the above bound and the interpolation error:
 
-\begin{theorem}$H^1$ Error Estimate \newline
-	Let $u$ be the solution of \eqref{eq:variational_inequality} and $u_h$ the solution of \eqref{eq:discrete_variational_inequality}. Then there exists a $C \in \mathbb{R}_{>0}$ such that the following holds:
+\begin{theorem}$H^1$ Error Estimate of the Discrete Solution \newline
+	There exists a $C \in \mathbb{R}_{>0}$ such that the following holds:
 	\begin{equation} \label{eq:H1_error}
 		\norm{u-u_h}_{H^1(\Omega)} \leq C h
 	\end{equation}
 	\begin{proof}
 		\begin{align*}
 		\norm{u-u_h}_{H^1(\Omega)} &\leq \norm{u-R_h(u)}_{H^1(\Omega)} + \norm{R_h(u) - u_h}_{H^1(\Omega)} \\
-		\overset{\text{\textcolor{red}{REF}}}&{\leq} \norm{u-R_h(u)}_{H^1(\Omega)} + C_1 h^{3/2} \\
-		\overset{\eqref{eq:ritz_minimization}}&{\leq} \norm{I_h(u) - R_h(u)}_{H^1(\Omega)} + C_1 h^{3/2} \\
-		\overset{\text{\textcolor{red}{REF}}}&{\leq} C_2 h + C_1 h^{3/2}
+		\overset{\eqref{eq:supercloseness}}&{\leq} \norm{u-R_h(u)}_{H^1(\Omega)} + C_1 \max \left(\abs{(u-R_h(u))(-1)}, \abs{(u-R_h(u))(1)}\right) \\
+		&\leq \norm{u-R_h(u)}_{H^1(\Omega)} + C_1 \norm{u-R_h(u)}_{L^\infty(\Omega)} \\
+		\overset{\eqref{eq:ritz_minimization} \eqref{eq:linfty_error_lemma}}&{\leq} \norm{I_h(u) - R_h(u)}_{H^1(\Omega)} + C_1 h^{3/2} \norm{u}_{H^2(\Omega)} \\
+		\overset{\text{\cite[Thm 4.4.20]{brenner2002mathematical}}}&{\leq} C_2 h + C_1 h^{3/2}\norm{u}_{H^2(\Omega)} \\
+		\overset{\eqref{eq:H2_norm_bound_by_f}}&{\leq} C h \norm{f}_{L^2(\Omega)}
 		\end{align*}
+		Since $f$ was fixed, the result follows.
 	\end{proof}
 \end{theorem}
 
@@ -691,14 +754,14 @@ The $H^1$ error follows directly from the above bound and the interpolation erro
 The estimation of the $L^2$ error is more involved. We will follow the lines of \cite{2019christof}, which in turn follows \cite[Section 7]{mosco2006}, who proposed this approach for a similar obstacle problem. The key idea is to formulate two so-called dual variational inequalities, one for the positive component $\max(0, u-u_h)$ and one for the negative component $\min(0, u-u_h)$ of the error. From these we will derive useful inequalities. For simplicity, we consider only the positive component, as it is completely analogous to the negative one.
 
 \begin{definition} The Dual Problem \newline
-	Let $u \in H^2(\Omega)$ be a solution of \eqref{eq:variational_inequality} for some $f \in L^2(\Omega)$ and $u_h \in V_h$ the solution of \eqref{eq:discrete_variational_inequality} for the same $f$. Furthermore, let $L \coloneqq \left\{ v \in H^1(-1,1) \,|\, v(\pm 1) \geq 0 \,\,\text{if}\,\, u(\pm 1) = 0 \right\}$.Then we define the dual problem as follows:
+	Let $L \coloneqq \left\{ v \in H^1(-1,1) \,|\, v(\pm 1) \geq 0 \,\,\text{if}\,\, u(\pm 1) = 0 \right\}$.Then we define the dual problem as follows:
 	\begin{equation} \label{eq:dual_variational_inequality}
 		z \in L,\quad (z,v-z)_{H^1(\Omega)} \geq (-\max(0,u-u_h),v-z)_{L^2(\Omega)} \quad \forall v \in L
 	\end{equation}
 \end{definition}
 
 \begin{lemma}Existence of a Unique Dual Solution \newline 
-	Let $u \in H^2(\Omega)$ be a solution of \eqref{eq:variational_inequality} for some $f \in L^2(\Omega)$ and $u_h \in V_h$ the solution of \eqref{eq:discrete_variational_inequality} for the same $f$. Then the dual problem \eqref{eq:dual_variational_inequality} admits a unique solution $z \in H^2(\Omega)$ for all $h > 0$. Furthermore, for this solution it holds that:
+	The dual problem \eqref{eq:dual_variational_inequality} admits a unique solution $z \in H^2(\Omega)$ for all $h > 0$. Furthermore, for this solution it holds that:
 	\begin{equation} \label{eq:dual_solution_nonpositive}
 		z \leq 0 \quad \text{in} \quad \bar{\Omega}
 	\end{equation}
