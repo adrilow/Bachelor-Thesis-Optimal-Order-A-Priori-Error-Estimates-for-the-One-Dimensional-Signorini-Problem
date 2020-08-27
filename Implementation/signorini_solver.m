@@ -28,5 +28,5 @@ function [v_h, B_1, B_2] = signorini_solver(n, h, f)
     A = spdiags(A_diag, 0, n, n);
 
     options = optimoptions('quadprog', 'Display', 'off');
-    v_h = quadprog(B_1+B_2, f, A, b, [],[],[],[],[],options);
+    v_h = quadprog(B_1+B_2, -f, A, b, [],[],[],[],[],options);
 end

@@ -8,6 +8,14 @@
 \usepackage{amsmath, amsthm, amssymb}
 \allowdisplaybreaks
 \usepackage{aligned-overset}
+\usepackage{pgfplots}
+% and optionally (as of Pgfplots 1.3):
+\pgfplotsset{compat=newest}
+\pgfplotsset{plot coordinates/math parser=false}
+\newlength\figureheight
+\newlength\figurewidth 
+\usepgfplotslibrary{external} 
+\tikzexternalize
 \usepackage{theoremref}
 \usepackage{commath}
 \usepackage{mathtools}
@@ -467,7 +475,7 @@ We could use the same techniques from the previous section to show that this pro
 	v_h(x) = \sum_{i=1}^{N} \mathbf{v}_i \varphi_i^h(x)
 	\end{equation}
 		The above problem \eqref{eq:discrete_minimization} is then equivalent to:
-		\begin{equation}
+		\begin{equation} \label{eq:matrix_formulation}
 		\min_{\substack{\mathbf{v} \in \mathbb{R}^{(N+1)\times(N+1)}\\ \mathbf{v}_{0} \geq 0,\, \mathbf{v}_N \geq 0}} \frac{1}{2} \mathbf{v}^T (B_1 + B_2) \mathbf{v} - \mathbf{f}^T  \mathbf{v}
 		\end{equation}
 		We call $B_1$ the \emph{mass matrix} and $B_2$ the \emph{stiffness matrix}. $B_1$, $B_2$ and $\mathbf{f} \in \mathbb{R}^{(N+1)\times(N+1)}$ are defined as follows:
@@ -838,7 +846,58 @@ We will now consider a solution $z \in H^2(\Omega)$ of \eqref{eq:dual_variationa
 
 
 \chapter{Implementation in Matlab}
+For the entirety of this chapter, let $u \in H^2(\Omega)$ be the unique solution of \eqref{eq:variational_inequality} for a given $f \in L^2(\Omega)$. Furthermore, let $u_h \in V_h$ be the solution of \eqref{eq:discrete_variational_inequality} for the same $f$.
+
 \section{Methods}
+\subsection{Minimization}
+We will describe the techniques used to implement the discrete minimization problem \eqref{eq:discrete_minimization} and test its accuracy.
+
+The mass and stiffness matrices are distinctly sparse, so we use the \verb|spdiags| function to implement them in an efficient way. 
+The implementation of the vector $\mathbf{f}$ requires integrating an unknown function, so the Gauss-Kronrod type quadrature builtin \verb|quadgk| is used. If this is used naively over the entire domain, the algorithm is not able to achieve the high precision required. This is of course due to the very small support of the basis functions $\varphi_i^h$, so a sort of additive quadrature formula is achieved by quadrating only over the support of the corresponding basis function $\int_{-1}^1 f\varphi_i^h\dif x = \int_{x_i}^{x_{i+1}} f\varphi_i^h\dif x$.
+The finite-dimensional minimization problem can then be easily solved via \verb|quadprog| to a high precision.
+
+\subsection{Accuracy Test}
+
+In this paper we have analyzed the convergence order of this method in three norms, so we will test our predictions in all three. Approximating every norm presents distinct challenges. Here we will distinguish between testing towards an analytical solution and testing towards a much finer, but still approximate solution.
+
+In the first case we analye $\norm{u-u_h}_*$. The $L^\infty$ norm is approximated as follows:
+\begin{equation*}
+	\norm{u-u_h}_{L^\infty(\Omega)} \approx \max \left\{\abs{u(x) - u_h(x)} \,|\, x \in \{-1 = x_0,\dots x_n = 1, x_{i+1} - x_i = h/1000\}, \right\}
+\end{equation*}
+It is important that the mesh is finer than the one used for the finite-dimensional problem, since obviously the most divergence will be found between the nodes.
+
+The $L^2$ and $H^1$ norms are approximated also using \verb|quadgk|, here also only quadrating individual intervals between nodes. Here the accuracy problem is not the support, but the large number of discontinuities at the nodes. This renders the quadrature formulas less accurate.
+
+In the second case, we can actually calculate the norms exactly, as we are dealing with infinite dimensional spaces. Let $\tilde{h}$ be the mesh width of the reference solution. The key idea is to embed the current approximate solution $u_h \in V_h$, which is of course just a vector $\mathbf{v}^h \in \mathbb{R}^{\mathrm{dim}\, V_h}$ into $V_{\tilde{h}}$. This can be done if the chosen mesh widths are all a negative power of two, and therefore the nodes in the lesser dimensional space are also nodes in the higher one. The nodes in between can be calculated by linear interpolation as follows:
+\begin{align*}
+	\mathbf{v}^{h/2} = \left(\mathbf{v}^h_0, \frac{\mathbf{v}^h_0 + \mathbf{v}^h_1}{2} , \mathbf{v}^h_1, \dots, \mathbf{v}^h_{N-1}, \frac{\mathbf{v}^h_{N-1} + \mathbf{v}^h_N}{2}, \mathbf{v}^h_N \right)
+\end{align*}
+
+In Matlab \verb|interp1| is used, which does several interpolation steps, avoiding the need for recursion.If we denote the reference solution vector as $\mathbf{v}^{\tilde{h}}$ and the interpolation of a lower dimensional one into $V_{\tilde{h}}$ as $\tilde{\mathbf{v}}^h$, then the norms can be exactly calculated as follows:
+\begin{align}
+\norm{u_{\tilde{h}} - u_h}_{L^\infty(\Omega)} &= \max_{i \in \{0,\dots,\mathrm{dim} \, V_{\tilde{h}}\}} \abs{\mathbf{v}^{\tilde{h}}_i - \tilde{\mathbf{v}}^h_i} \\
+\norm{u_{\tilde{h}} - u_h}_{L^2(\Omega)} &=  \sqrt{(\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)^T B_1 (\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)}\\
+\norm{u_{\tilde{h}} - u_h}_{H^1(\Omega)} &= \sqrt{(\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)^T (B_1+B_2) (\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)}
+\end{align}
+The first result follows simply from the piecewise linearity of the involved functions. The second and third one follow from \eqref{eq:matrix_formulation}, since $B_1$ and $B_1 + B_2$ are transformation matrices for the $L^2$ and $H^1$ scalar products, respectively.
+\section{Results}
+Firstly, we will try to analyze the method using a right hand side $f$ which allows for an analytical classical solution. We will therefore consider the following instance of the Signorini Problem:
+
+\begin{align*}
+-u'' + u &= \sin \quad \textnormal{in} \quad \Omega \\ 
+\partial_n u \geq 0,\quad u &\geq 0,\quad u\partial_nu = 0 \quad\textnormal{on}\quad \partial \Omega 
+\end{align*}
+
+It is easy to see that a solution to this problem has the following form:
+\begin{equation*}
+	u(x) = c_1 e^x + c_2 e^{-x} + \frac{\sin(x)}{2}
+\end{equation*}
+For some $c_1,c_2 \in \mathbb{R}$. Enforcing the boundary conditions leads to the following coefficients:
+\begin{align*}
+c_1 = - \frac{e^3\cos(1) - e^1\sin(1)}{2(e^4 + 1)}, \quad c_2 = \frac{e^1\cos(1) + e^3\sin(1)}{2(e^4 + 1)}
+\end{align*}
+
+\input{L2_function.tex}
 
 \chapter{Anhang}
 
