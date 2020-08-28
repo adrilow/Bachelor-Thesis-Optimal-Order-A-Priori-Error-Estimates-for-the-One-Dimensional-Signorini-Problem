@@ -14,7 +14,7 @@ function [inf_norms, eoc_inf, L2_norms, eoc_L2, H1_norms, eoc_H1] = test_solver(
    H1_norms     = zeros(iterations,1);
    eoc_H1       = zeros(iterations,1);
    
-   for i = 1:iterations
+   for i = 0:iterations
 %        n = 10 + (10*(i-1));
 %        h = 2/(n-1);
 %        h_prev = (2/(n-10-1));
@@ -29,10 +29,15 @@ function [inf_norms, eoc_inf, L2_norms, eoc_L2, H1_norms, eoc_H1] = test_solver(
 
        X1 = -1:meshw:1;    % domain
        f1 = sol(X1);      % range
-       Y1 = diff(f1)/meshw;   % first derivative
        f2 = fe_function(v_h,h,X1);
+       f3 = f(X1);
+       plot(X1,f3,X1,f1,X1,f2);
+       legend({'\sin(x)', 'u(x)','u_h(x)'}, 'Location', 'northwest');
+       
+       Y1 = diff(f1)/meshw;   % first derivative
        Y2 = fe_function_prime(v_h,h,X1);
-       plot(X1(:,1:length(Y1)),Y1,X1,f1,X1,f2,X1(:,1:length(Y1)),Y2(:,1:length(Y1)));
+       plot(X1(:,1:length(Y1)),Y1,X1(:,1:length(Y1)),Y2(:,1:length(Y1)));
+       legend({'u''(x)','u_h''(x)'}, 'Location', 'northwest');
        
        inf_norms(i) = inf_norm(v_h,h,sol);
        L2_norms(i)  = L2_norm(h,n,@(x) fe_function(v_h,h,x),sol);
@@ -53,19 +58,15 @@ function [norm] = inf_norm(v_h, h, sol)
 end
 
 function [norm] = L2_norm(h,n,f,sol)
-    norm = sqrt(L2_norm_squared(h,n,f,sol,0,0,'L2'));
+    norm = sqrt(L2_norm_squared(h,n,f,sol,0,'L2'));
 end
 
-function [norm] = L2_norm_squared(h,n,f,sol,shl,shr,str)
+function [norm] = L2_norm_squared(h,n,f,sol,shr,str)
     norm = 0;
     L2_func = @(x)(sol(x) - f(x)).^2;
     for i=0:n-1
-        t_im1 = max(-1 + shl, -1 + ((i-1)*h));
         t_i   = -1 + (i*h);
         t_ip1 = min(1 - shr, -1 + ((i+1)*h));
-        if (t_im1 ~= t_i)
-            norm = norm + quadgk(L2_func, t_im1, t_i);
-        end
         if (t_ip1 ~= t_i)
             norm = norm + quadgk(L2_func, t_i, t_ip1);
         end
@@ -74,7 +75,7 @@ function [norm] = L2_norm_squared(h,n,f,sol,shl,shr,str)
 end
 
 function [norm] = H1_norm(h,n,f,sol,fp,solp)
-    norm = L2_norm_squared(h,n,f,sol,0,0,'L2');
-    norm = norm + L2_norm_squared(h,n,fp,solp,h,h,'L2p');
+    norm = L2_norm_squared(h,n,f,sol,0,'L2');
+    norm = norm + L2_norm_squared(h,n,fp,solp,h,'L2p');
     norm = sqrt(norm);
 end

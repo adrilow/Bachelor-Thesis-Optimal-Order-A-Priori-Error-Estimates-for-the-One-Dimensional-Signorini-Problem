@@ -14,14 +14,13 @@
 \pgfplotsset{plot coordinates/math parser=false}
 \newlength\figureheight
 \newlength\figurewidth 
-\usepgfplotslibrary{external} 
-\tikzexternalize
 \usepackage{theoremref}
 \usepackage{commath}
 \usepackage{mathtools}
 \usepackage{aligned-overset}
 \usepackage{marvosym}
-\usepackage{graphics}
+%\usepackage{graphics}
+\usepackage{graphicx} 
 \usepackage[%
 backend=biber,
 url=false,
@@ -86,6 +85,13 @@ uniquename=init]{biblatex} % TODO: adapt citation style
 }
 \makeatother
 
+\makeatletter
+\newcommand*{\centerfloat}{%
+	\parindent \z@
+	\leftskip \z@ \@plus 1fil \@minus \textwidth
+	\rightskip\leftskip
+	\parfillskip \z@skip}
+\makeatother
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
@@ -845,7 +851,9 @@ We will now consider a solution $z \in H^2(\Omega)$ of \eqref{eq:dual_variationa
 \end{theorem}
 
 
-\chapter{Implementation in Matlab}
+\chapter{Numerical Tests}
+We will use the popular numerics tool Matlab \cite{MATLAB2020} for the implementation, as it provides builtin tools to solve the subproblems that arise in the method which we do not handle in this paper, such as quadratic programming and quadrature. The actual code used for the experiments below can be found under \cite{Loewenberg2020}.
+
 For the entirety of this chapter, let $u \in H^2(\Omega)$ be the unique solution of \eqref{eq:variational_inequality} for a given $f \in L^2(\Omega)$. Furthermore, let $u_h \in V_h$ be the solution of \eqref{eq:discrete_variational_inequality} for the same $f$.
 
 \section{Methods}
@@ -853,7 +861,10 @@ For the entirety of this chapter, let $u \in H^2(\Omega)$ be the unique solution
 We will describe the techniques used to implement the discrete minimization problem \eqref{eq:discrete_minimization} and test its accuracy.
 
 The mass and stiffness matrices are distinctly sparse, so we use the \verb|spdiags| function to implement them in an efficient way. 
-The implementation of the vector $\mathbf{f}$ requires integrating an unknown function, so the Gauss-Kronrod type quadrature builtin \verb|quadgk| is used. If this is used naively over the entire domain, the algorithm is not able to achieve the high precision required. This is of course due to the very small support of the basis functions $\varphi_i^h$, so a sort of additive quadrature formula is achieved by quadrating only over the support of the corresponding basis function $\int_{-1}^1 f\varphi_i^h\dif x = \int_{x_i}^{x_{i+1}} f\varphi_i^h\dif x$.
+The implementation of the vector $\mathbf{f}$ requires integrating an unknown function, so the Gauss-Kronrod type quadrature builtin \verb|quadgk| is used. If this is used naively over the entire domain, the algorithm is not able to achieve the high precision required. This is of course due to the very small support of the basis functions $\varphi_i^h$, so a sort of additive quadrature formula is achieved by quadrating only over the support of the corresponding basis function:
+\begin{equation}
+\mathbf{f}_i = \int_{-1}^1 f\varphi_i^h\dif x = \int_{\max\{-1, x_{i-1}\}}^{\min\{1, x_{i+1}\}} f\varphi_i^h\dif x
+\end{equation} 
 The finite-dimensional minimization problem can then be easily solved via \verb|quadprog| to a high precision.
 
 \subsection{Accuracy Test}
@@ -861,12 +872,19 @@ The finite-dimensional minimization problem can then be easily solved via \verb|
 In this paper we have analyzed the convergence order of this method in three norms, so we will test our predictions in all three. Approximating every norm presents distinct challenges. Here we will distinguish between testing towards an analytical solution and testing towards a much finer, but still approximate solution.
 
 In the first case we analye $\norm{u-u_h}_*$. The $L^\infty$ norm is approximated as follows:
-\begin{equation*}
-	\norm{u-u_h}_{L^\infty(\Omega)} \approx \max \left\{\abs{u(x) - u_h(x)} \,|\, x \in \{-1 = x_0,\dots x_n = 1, x_{i+1} - x_i = h/1000\}, \right\}
-\end{equation*}
+\begin{align}
+\norm{u-u_h}_{L^\infty(\Omega)} &\approx \\ &\max \left\{\abs{u(x) - u_h(x)} \,|\, x \in \{-1 = x_0,\dots, x_n = 1, x_{i+1} - x_i = h/1000\} \right\} \nonumber 
+\end{align}
 It is important that the mesh is finer than the one used for the finite-dimensional problem, since obviously the most divergence will be found between the nodes.
 
-The $L^2$ and $H^1$ norms are approximated also using \verb|quadgk|, here also only quadrating individual intervals between nodes. Here the accuracy problem is not the support, but the large number of discontinuities at the nodes. This renders the quadrature formulas less accurate.
+The $L^2$ and $H^1$ norms are approximated also using \verb|quadgk|, here also only quadrating individual intervals between nodes:
+\begin{align}
+\begin{split}
+	\norm{u-u_h}_{L^2(\Omega)} &= \sqrt{\sum_{i=0}^{N-1} \norm{u-u_h}_{L^2(x_i, x_{i+1})}^2 } \\
+	\norm{u-u_h}_{H^1(\Omega)} &= \sqrt{\sum_{i=0}^{N-1} \norm{u-u_h}_{L^2(x_i, x_{i+1})}^2 + \sum_{i=0}^{N-1} \norm{u'-u_h'}_{L^2(x_i, x_{i+1})}^2} 
+\end{split}
+\end{align}
+ Here the accuracy problem is not the support, but the large number of discontinuities at the nodes. This renders the quadrature formulas less accurate.
 
 In the second case, we can actually calculate the norms exactly, as we are dealing with infinite dimensional spaces. Let $\tilde{h}$ be the mesh width of the reference solution. The key idea is to embed the current approximate solution $u_h \in V_h$, which is of course just a vector $\mathbf{v}^h \in \mathbb{R}^{\mathrm{dim}\, V_h}$ into $V_{\tilde{h}}$. This can be done if the chosen mesh widths are all a negative power of two, and therefore the nodes in the lesser dimensional space are also nodes in the higher one. The nodes in between can be calculated by linear interpolation as follows:
 \begin{align*}
@@ -880,14 +898,13 @@ In Matlab \verb|interp1| is used, which does several interpolation steps, avoidi
 \norm{u_{\tilde{h}} - u_h}_{H^1(\Omega)} &= \sqrt{(\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)^T (B_1+B_2) (\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)}
 \end{align}
 The first result follows simply from the piecewise linearity of the involved functions. The second and third one follow from \eqref{eq:matrix_formulation}, since $B_1$ and $B_1 + B_2$ are transformation matrices for the $L^2$ and $H^1$ scalar products, respectively.
-\section{Results}
-Firstly, we will try to analyze the method using a right hand side $f$ which allows for an analytical classical solution. We will therefore consider the following instance of the Signorini Problem:
 
+\section{Results}
+Firstly, we will try to analyze the method using a right hand side $f$ which allows for an analytical classical solution, and can therefore be used as a reference in our numerical experiments. We will therefore consider the following instance of the Signorini Problem:
 \begin{align*}
 -u'' + u &= \sin \quad \textnormal{in} \quad \Omega \\ 
 \partial_n u \geq 0,\quad u &\geq 0,\quad u\partial_nu = 0 \quad\textnormal{on}\quad \partial \Omega 
 \end{align*}
-
 It is easy to see that a solution to this problem has the following form:
 \begin{equation*}
 	u(x) = c_1 e^x + c_2 e^{-x} + \frac{\sin(x)}{2}
@@ -897,7 +914,21 @@ For some $c_1,c_2 \in \mathbb{R}$. Enforcing the boundary conditions leads to th
 c_1 = - \frac{e^3\cos(1) - e^1\sin(1)}{2(e^4 + 1)}, \quad c_2 = \frac{e^1\cos(1) + e^3\sin(1)}{2(e^4 + 1)}
 \end{align*}
 
-\input{L2_function.tex}
+\begin{figure}[h!]
+	\centerfloat
+	\begin{tabular}{c@{\hskip -1em}c}
+	\input{sin_sol.tex} & \input{sin_sol_derivative.tex}	
+	\end{tabular}
+	\caption[Solution to $f = \sin$]{To the left, the right hand side of the problem $f$, the exact solution $u$, and a discrete solution $u_h$. To the right, the derivatives of the continuous and discrete solutions (with a different mesh width for illustrative purposes).}
+\end{figure}
+
+\begin{figure}[h!]
+	\centerfloat
+	\begin{tabular}{c@{\hskip -1em}c}
+		\input{L2_function_sol.tex} & \input{L2_function_sol_derivative.tex}	
+	\end{tabular}
+	\caption[Solution to $f = \abs{x}^{\frac{1}{2} - \epsilon}$]{To the left, the right hand side of the problem $f = \abs{x}^{0.499}$, the reference solution $u_{\tilde{h}}$, and a discrete solution $u_h$. To the right, the derivatives of the reference and discrete solutions (with a different mesh width for illustrative purposes).}
+\end{figure}
 
 \chapter{Anhang}
 
