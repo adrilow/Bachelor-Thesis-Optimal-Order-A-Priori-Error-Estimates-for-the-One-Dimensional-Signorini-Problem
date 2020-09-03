@@ -1,8 +1,8 @@
 function [inf_norms, eoc_inf, L2_norms, eoc_L2, H1_norms, eoc_H1] = test_solver_L2()
    
    f = @(x) abs(x).^(-0.499);
-   h_fine = 2^(-14);
-   n_fine = 2^(14+1) + 1;
+   h_fine = 2^(-12);
+   n_fine = 2^(12+1) + 1;
    [v_h_fine,B1_fine,B2_fine] = signorini_solver(n_fine, h_fine, basis_quadrature(f, n_fine, h_fine));
    sol = @(x) fe_function(v_h_fine, h_fine, x);
    solp = @(x) fe_function_prime(v_h_fine, h_fine, x);
@@ -23,19 +23,19 @@ function [inf_norms, eoc_inf, L2_norms, eoc_L2, H1_norms, eoc_H1] = test_solver_
        
        [v_h,~,~] = signorini_solver(n, h, basis_quadrature(f, n, h));
        v_h_refined = refine_v(h,h_fine,v_h);
-
-       X1 = -1:meshw:1;    % domain
-       f1 = sol(X1);      % range
-       f2 = fe_function(v_h,h,X1);
-       f3 = f(X1);
-       plot(X1,f3,X1,f1,X1,f2);
-       ylim([1,3.5]);
-       legend({'xto43', 'u(x)','u_h(x)'}, 'Location', 'northwest');
-       
-       Y1 = diff(f1)/meshw;   % first derivative
-       Y2 = fe_function_prime(v_h,h,X1);
-       plot(X1(:,1:length(Y1)),Y1,X1(:,1:length(Y1)),Y2(:,1:length(Y1)));
-       legend({'u''(x)','u_h''(x)'}, 'Location', 'northwest');
+% 
+%        X1 = -1:meshw:1;    % domain
+%        f1 = sol(X1);      % range
+%        f2 = fe_function(v_h,h,X1);
+%        f3 = f(X1);
+%        plot(X1,f3,X1,f1,X1,f2);
+%        ylim([1,3.5]);
+%        legend({'xto43', 'u(x)','u_h(x)'}, 'Location', 'northwest');
+%        
+%        Y1 = diff(f1)/meshw;   % first derivative
+%        Y2 = fe_function_prime(v_h,h,X1);
+%        plot(X1(:,1:length(Y1)),Y1,X1(:,1:length(Y1)),Y2(:,1:length(Y1)));
+%        legend({'u''(x)','u_h''(x)'}, 'Location', 'northwest');
        
        inf_norms(i) = inf_norm(v_h_refined,v_h_fine);
        L2_norms(i)  = L2_norm(v_h_refined,v_h_fine,B1_fine);

@@ -4,7 +4,7 @@
 
 %\documentclass[english,a4paper,12pt,oneside]{scrbook}
 \usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
+\usepackage[german, english]{babel}
 \usepackage{amsmath, amsthm, amssymb}
 \allowdisplaybreaks
 \usepackage{aligned-overset}
@@ -34,6 +34,12 @@ uniquename=init]{biblatex} % TODO: adapt citation style
 \usepackage{microtype}
 \usepackage{bera}
 \usepackage{xcolor}
+\usepackage{siunitx}
+\usepackage{xfrac}
+\usepackage{epigraph}
+\setlength{\epigraphwidth}{0.7\textwidth}
+\renewcommand{\epigraphsize}{\footnotesize}
+\usetikzlibrary{patterns}
 
 
 \bibliography{Bibliography}
@@ -96,20 +102,21 @@ uniquename=init]{biblatex} % TODO: adapt citation style
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 
-%\newtheorem{satz}{Satz}[chapter]
-%\theoremstyle{definition} 
-%\newtheorem{definition}[satz]{Definition} 
-%\theoremstyle{definition} 
-%\newtheorem{lemma}[satz]{Lemma} 
-%\theoremstyle{definition} 
-%\newtheorem{bemerkung}[satz]{Bemerkung}
-%\theoremstyle{definition} 
-%\newtheorem{korollar}[satz]{Korollar} 
-%\theoremstyle{definition}
-%\newtheorem{beispiel}[satz]{Beispiel} 
-%\theoremstyle{definition} 
-%\newtheorem{algorithmus}{Algorithmus} 
-%\newenvironment{beweis}{\begin{proof}[Beweis]}{\end{proof}}
+% Define TUM corporate design colors
+% Taken from http://portal.mytum.de/corporatedesign/index_print/vorlagen/index_farben
+\definecolor{TUMBlue}{HTML}{0065BD}
+\definecolor{TUMSecondaryBlue}{HTML}{005293}
+\definecolor{TUMSecondaryBlue2}{HTML}{003359}
+\definecolor{TUMBlack}{HTML}{000000}
+\definecolor{TUMWhite}{HTML}{FFFFFF}
+\definecolor{TUMDarkGray}{HTML}{333333}
+\definecolor{TUMGray}{HTML}{808080}
+\definecolor{TUMLightGray}{HTML}{CCCCC6}
+\definecolor{TUMAccentGray}{HTML}{DAD7CB}
+\definecolor{TUMAccentOrange}{HTML}{E37222}
+\definecolor{TUMAccentGreen}{HTML}{A2AD00}
+\definecolor{TUMAccentLightBlue}{HTML}{98C6EA}
+\definecolor{TUMAccentBlue}{HTML}{64A0C8}
 
 \newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
@@ -120,7 +127,6 @@ uniquename=init]{biblatex} % TODO: adapt citation style
 \setlength{\parskip}{0.8em}
 
 \begin{document}
-
 
 % Titelseite
 \pagestyle{empty}       % keine Seitennummer
@@ -177,7 +183,9 @@ Munich,\hspace{80mm} Adrián Löwenberg Casas
 \pagenumbering{roman}
 % Kopfzeilen (automatisch erzeugt)
 \pagestyle{headings}
-[Text der Danksagung]
+Firstly, I would like to thank my advisor Dr. Constantin Christof for his valuable and patient help and comments, especially during the difficult circumstances of the Covid-19 pandemic.
+
+A warm thank you goes to my mentor and dear friend Jonas Graw for pushing my to pursue mathematics, as well as to my friend Jonas P.-Hennig, for actually making it possible.
 \newpage
 
 % Seite 3
@@ -185,9 +193,19 @@ Munich,\hspace{80mm} Adrián Löwenberg Casas
 \chapter*{}
 \vspace*{-2.2cm}
 \section*{Zusammenfassung auf Deutsch}
-[Text der Zusammenfassung]
-\section*{Zusammenfassung auf Englisch}
-[Summary of the thesis]
+\begin{otherlanguage}{german}
+	In dieser Arbeit werden wir das eindimensionale Signorini-Problem behandeln. Nach der Formulierung des Problems werden wir ausführlich seine schwache Formulierung herleiten in Form einer Variationsungleichung sowie eines konvexen Minimierungsproblem in einem Hilbertraum, einer der eindimensionalen Sobolev-Räumen, die wir auf zwei Arten einführen werden. Diese Formulierung wird ein Beweis der Existenz und Eindeutigkeit einer Lösung erlauben.
+	
+	Wir werden die Finite-Elemente-Methode zur numerischen Approximation von Lösungen zum Problem betrachten. Diese Methode erlaubt eine sehr ähnliche Formulierung des Problems, obgleich in einem endlichdimensionalen Raum. Danach werden wir die Fundiertheit dieser Konstruktion analysieren durch Herleitung von a-priori Konvergenzordnungen optimaler Ordnung für den Fehler der Approximationen in verschiedenen Normen, welche wir zum Schluss mit zwei empirischen Beispiele mittels einer MATLAB Implementierung der Methode testen werden.
+\end{otherlanguage}
+
+\section*{Abstract in English}
+In this paper we will handle the one-dimensional Signorini problem. After formulating the problem, we will thoroughly derive its weak formulation as a variational inequality and as a convex minimization problem in a Hilbert Space, one of the one-dimensional Sobolev spaces, which we will introduce in two ways. This formulation will allow for the proof of existence and uniqueness of a solution. 
+
+We will consider the finite element method to approximate solutions to the problem numerically. This method allows for a very similar formulation of the problem, albeit in a finite dimensional space. Then, we will analyze the soundness of this construction by deriving optimal-order a-priori convergence orders for the error of the approximations in several norms which we will lastly test with two empirical examples with a MATLAB implementation of the method.
+
+
+
 %Seite 4
 \newpage
 \microtypesetup{protrusion=false}
@@ -196,19 +214,77 @@ Munich,\hspace{80mm} Adrián Löwenberg Casas
 
 
 \pagenumbering{arabic}  % Nummerierung der Seiten in 'arabisch' % neues Kapitel mit Namen "Introduction"
-\chapter{Einleitung}  \setcounter{page}{1}   % setzt Seitenzaehlung auf 1
-Zitate aus B\"uchern werden so gemacht, siehe in \cite{schoenbucher03} oder \cite{marshall67}.
+\chapter{History and Background}  \setcounter{page}{1}   % setzt Seitenzaehlung auf 1
+\epigraph{``Il mio discepolo Fichera mi ha dato una grande soddisfazione'' [My disciple Fichera gave me a great contentment] \\
+	``Ma Lei ne ha avute tante, Professore, durante la Sua vita'' [But you, Professor, have had so many throughout your life], \textit{replied Doctor Aprile, but then Signorini replied again:} \\
+	``Ma questa è la più grande.'' [But this is the greatest one] \textit{And those were his last words.}
+}{\textit{Antonio Signorini speaking with his doctor Damiano Aprile about his student Gaetano Fichera having solved his probelm \cite{Fichera95}.}}
 
-\chapter{Theory}
+The original Signorini problem dates back to 1959, when Antonio Signorini (Rome, 1888) posed it in a course he taught on the \textit{Instituto Nazionale di Alta Matematica} \cite{signorini59}. The problem consisted of finding the elastic equilibrium configuration of a spherical elastic body on a rigid frictionless plane which satisfied a set of ambiguous boundary conditions. Signorini used the term ``ambiguous'' himself, since it was not known a-priori which of two alternative sets of boundary conditions involving equalities and inequalities were to be satisfied at any given point. 
+
+One of his students at the time, Gaetano Fichera, who would eventually solve the problem before Signorini's death, to his great satisfaction, attended the course and was intrigued not to find any similar problems in the literature about boundary value problems \cite{Fichera95}. His proof of the existence of a unique solution was published soon after Signorini's death \cite{fichera63}, where the problem was coined ``Signorini's Problem'' in his teacher's honor.
+
+The problem we will analyze here is a simpler, one dimensional version of the problem, where an elastic beam with a two-point contact set on the boundary is subject to a force. The ambiguity of the boundary conditions, as stated by Signorini, refers here to the fact that the beam might or might not be in contact with the surface after applying the force, and therefore the conditions are different in each case.
+\pagebreak
 
 \begin{definition}The One Dimensional Signorini Problem \newline
 	Let $\Omega \coloneqq (-1,1)$. We denote the boundary of $\Omega$ by $\partial\Omega = \{-1,1\}$ and the normal derivative of $u$ on $\partial\Omega$ by $\partial_nu$, i.e. $\partial_nu(-1) = -u'(-1)$ and $\partial_nu(1) = u'(1)$. Furthermore let $f \in L^2(-1,1)$ be the given forcing term. The One-Dimensional Signorini Problem is defined as follows:
 	\begin{align}
 	-u'' + u &= f \quad \textnormal{in} \quad \Omega \label{eq:signorini}\\ 
-	\partial_n u \geq 0,\quad u &\geq 0,\quad u\partial_nu = 0 \quad\textnormal{on}\quad \partial \Omega \label{eq:boundary_signorini}
+	\textcolor{TUMBlue}{\partial_n u \geq 0},\quad \textcolor{TUMAccentOrange}{u}\, &\textcolor{TUMAccentOrange}{\geq 0},\textcolor{TUMGray}{\quad u\partial_nu = 0} \quad\textnormal{on}\quad \partial \Omega \label{eq:boundary_signorini}
 	\end{align}
+	The third boundary condition is the ``ambiguous'' one, as either the beam touches the surface $u(\pm1) = 0$, or it has vanishing derivative on the border $\partial_nu(\pm 1) = 0$.
 \end{definition}
 
+\begin{figure}[h!]
+	\centering
+	\begin{tikzpicture}[scale=4.5]
+	\draw (-1.25,1) -- (-1,1) -- (-1,0.25);
+	\draw (1,0.25) -- (1,1) -- (1.25,1);
+	\pattern[pattern=north west lines, pattern color=black] (-1.25,0.25) rectangle (-1,1)
+	(1,0.25) rectangle (1.25,1);
+	\node[anchor = north] at (-1.125,0.25) {$\vdots$};
+	\node[anchor = north] at (1.125,0.25) {$\vdots$};
+
+	\draw[thick] plot [smooth] coordinates{(-1,1) (-0.75,0.9451) (-0.5,0.9719) (-0.25,1.0569) (0,1.1764) (0.25,1.3069) (0.5,1.4258) (0.75,1.5116) (1,1.5443)}; 
+	
+	\draw[->] (-1,2) to 	(-1,	1.5793);
+	\draw[->] (-0.75,2) to 	(-0.75,	1.6592);
+	\draw[->] (-0.5,2) to 	(-0.5,	1.7603);
+	\draw[->] (-0.25,2) to 	(-0.25,	1.8763);
+	%\draw[->] (0,2) to 		(0,2);
+	\draw[->] (0.25,2) to 	(0.25,	2.1237);
+	\draw[->] (0.5,2) to 	(0.5,	2.2397);
+	\draw[->] (0.75,2) to 	(0.75,	2.3408);
+	\draw[->] (1,2) to 		(1,		2.4207);
+	\node at (0,2) {$f$};
+	
+	\node at (0,1.30) {$u$};
+	
+	\node[anchor=south] at (-1,1) {$\scriptstyle \substack{\textcolor{TUMAccentOrange}{u(-1) \geq 0} \\ \textcolor{TUMGray}{u (-1) = 0}}$};
+	\draw[->] (-1,1) to	(-0.75,	0.85);
+	\node[anchor = north] at (-0.75,	0.85) {$\scriptstyle \textcolor{TUMBlue}{\partial_n u(-1) \geq 0}$};
+	
+	\node[anchor=south] at (1,1.5433) {$\scriptstyle \textcolor{TUMAccentOrange}{u (1) \geq 0}$};
+	\draw[->] (1,1.5433) to	(1.25,	1.5433);
+	\node[anchor = west] at (1.25,	1.5433) {$\scriptstyle \substack{\textcolor{TUMBlue}{\partial_n u(1) \geq 0} \\ \textcolor{TUMGray}{\partial_nu (1) = 0}}$};
+	
+	\node[anchor = north] at (0, 0)   {\scriptsize 0};
+	\node[anchor = north] at (1, 0)   {\scriptsize 1};
+	\node[anchor = north] at (-1, 0)   {\scriptsize -1};
+	\node[anchor = east] at (-1.5, 1)   {\scriptsize 0};
+
+	\draw[<->] (-1, 0) to (1, 0);
+	\draw[<->] (-1.5, 0) to (-1.5, 1);
+	\end{tikzpicture}
+	\caption[Visualization of the Signorini Problem]{Rough visualization of the solution $u$ of the Signorini problem with a right hand side $f = \sin$, satisfying different boundary conditions on each contact point.}
+\end{figure}
+
+\chapter{Solvability of the Signorini Problem}
+
+The classical formulation \eqref{eq:signorini} of the Signorini problem has an intuitive physical meaning, but it is not suitable for the mathematical analysis of the existence of a solution. We will work towards the so-called weak formulation of the problem, which will allow for the usage of general functional analysis techniques, as well as some from the calculus of variations. To that end, we will firstly define the Sobolev Banach and Hilbert Spaces.
+
+\section{Sobolev Spaces}
 \begin{definition}One Dimensional Sobolev-Spaces \newline
 	Let $p\in [1,\infty]$. For $k \in \mathbb{N}_0$, the Sobolev-Space $W^{k,p}(a,b)$ is defined as follows:
 	\begin{align}
@@ -226,7 +302,7 @@ Zitate aus B\"uchern werden so gemacht, siehe in \cite{schoenbucher03} oder \cit
 	\end{equation}
 	In the case of $p=2$ the notation $H^k(a,b) \coloneqq W^{k,2}(a,b)$ is used. This space is a Hilbert Space with the following inner product:
 	\begin{equation}
-	(v,z)_{H^k(a,b)} \coloneqq \sum_{i=0}^{k} (v^{(k)}, z^{(k)})_{L^2(a,b)} = \sum_{i=0}^{k} \int_a^b v^{(k)}(\tau)z^{(k)}(\tau) \dif \tau \label{eq:sobolev1_inner_product}
+	(v,z)_{H^k(a,b)} \coloneqq \sum_{i=0}^{k} (v^{(k)}, z^{(k)})_{L^2([a,b])} = \sum_{i=0}^{k} \int_a^b v^{(k)}(\tau)z^{(k)}(\tau) \dif \tau \label{eq:sobolev1_inner_product}
 	\end{equation}
 	These results can be found in the literature, for example in Mitrović and Žubrinić \cite[Chapter 5, Section 2, Remark 2]{mitrovic1997fundamentals}.
 \end{definition}
@@ -234,32 +310,32 @@ Zitate aus B\"uchern werden so gemacht, siehe in \cite{schoenbucher03} oder \cit
 This definition of the Sobolev Spaces, although the most simple, is not the one most commonly found in the literature. The usual way to define a weak derivative, and therefore the Sobolev Spaces is through testing with infinitely differentiable functions with compact support. This alternative definition will be useful down the line, as it is very analogous to the variational inequalities we will be considering:
 
 \begin{lemma} Equivalent Characterization of the Sobolev Spaces \newline
-	Let $C_c^\infty(a,b)$ be the space of the infinitely differentiable functions with compact support inside $(a,b)$. Note that this implies that these functions disappear on the boundary. Let $k \in \mathbb{N}_0$. Let $v$ be a locally integrable function. A locally integrable function $w$, which fulfills:
+	Let $C_c^\infty([a,b])$ be the space of the infinitely differentiable functions with compact support inside $(a,b)$. Note that this implies that these functions disappear on the boundary. Let $k \in \mathbb{N}_0$. Let $v$ be a locally integrable function. A locally integrable function $w$, which fulfills:
 	\begin{equation} \label{eq:weak_derivative_through_testing}
-	\int_a^b u \varphi^{(k)} \dif x = \int_a^b w \varphi \dif x \quad \forall \varphi \in C_c^\infty(a,b)
+	\int_a^b u \varphi^{(k)} \dif x = \int_a^b w \varphi \dif x \quad \forall \varphi \in C_c^\infty([a,b])
 	\end{equation}
 	or, equivalently:
 	\begin{equation}
-		(u,\varphi^{(k)})_{L^2(a,b)} = (w,\varphi)_{L^2(a,b)} \quad \forall \varphi \in C_c^\infty(a,b)
+		(u,\varphi^{(k)})_{L^2([a,b])} = (w,\varphi)_{L^2([a,b])} \quad \forall \varphi \in C_c^\infty([a,b])
 	\end{equation}
 	is the $k$th weak derivative of $v$, i.e. $v^{(k)} = w$. With this definition one can also see through partial integration that in the case that a classical derivative exists, it is also the weak derivative.
 	
-	 furthermore $p\in [1,\infty]$. For $k \in \mathbb{N}_0$ and $p \in \mathbb{N}$, the Sobolev Space $W^{k,p}(a,b)$ is the space of all $L^p(a,b)$-functions whose $i$th partial derivative, defined in the above sense, has a finite $L^p$-norm, for all $i \in \{0,\dots,k\}$. 
+	 furthermore $p\in [1,\infty]$. For $k \in \mathbb{N}_0$ and $p \in \mathbb{N}$, the Sobolev Space $W^{k,p}(a,b)$ is the space of all $L^p([a,b])$-functions whose $i$th partial derivative, defined in the above sense, has a finite $L^p$-norm, for all $i \in \{0,\dots,k\}$. 
 	
 	
 	Again, this definition can be found in the literature, for example in Kurdilla and Zabarankin \cite[Definition 3.2.3]{kurdila2005convex}.
 \end{lemma}
 
-The Sobolev Spaces are subspaces of the $L^p$-spaces, therefore their elements are equivalence classes of Lebesgue-almost everywhere equal functions. In order to formulate the Signorini Problem weakly, we however need to enforce the boundary conditions, which are defined on the two points of $\partial \Omega$. We will show that in the case of $H^k(a,b)$, there is always a canonical representative in $C^{k-1}([a,b])$.
+The Sobolev Spaces are subspaces of the $L^p$-spaces, therefore their elements are equivalence classes of Lebesgue-almost everywhere equal functions. In order to formulate the Signorini Problem weakly, we however need to enforce the boundary conditions, which are defined on the two points of $\partial \Omega$. We will show that in the case of $H^k([a,b])$, there is always a canonical representative in $C^{k-1}([a,b])$.
 
 
-\begin{lemma}\thlabel{thm:sobolev_embedding_1} Sobolev Embedding for $H^1(a,b)$ \newline
-	For every $u \in H^1(a,b)$ there exists a $v \in C^{0,\frac{1}{2}}([a,b])$, where $C^{0,\frac{1}{2}}$ is a Hölder-Space with Hölder-continuity constant $\frac{1}{2}$, such that $u = [v \vert_{(a,b)}]$. As an embedding, this can be written as:
-	\begin{equation}
-	H^1(a,b) \hookrightarrow C^{0,\frac{1}{2}}([a,b])
+\begin{lemma}\thlabel{thm:sobolev_embedding_1} Sobolev Embedding for $H^1([a,b])$ \newline
+	For every $u \in H^1([a,b])$ there exists a $v \in C^{0,\frac{1}{2}}([a,b])$, where $C^{0,\frac{1}{2}}$ is a Hölder-Space with Hölder-continuity constant $\frac{1}{2}$, such that $u = [v \vert_{(a,b)}]$. As an embedding, this can be written as:
+	\begin{equation} \label{eq:sobolev1_embedding}
+	H^1([a,b]) \hookrightarrow C^{0,\frac{1}{2}}([a,b])
 	\end{equation}
 	\begin{proof}
-	Let $u \in H^1(a,b)$, $a \leq x_1 < x_2 \leq b$, and let $u = [v]$ such that $v(x) = v_0 + \int_a^x w(\tau) \dif \tau$. We will show that $v$ is $\frac{1}{2}$-Hölder-continuous:
+	Let $u \in H^1([a,b])$, $a \leq x_1 < x_2 \leq b$, and let $u = [v]$ such that $v(x) = v_0 + \int_a^x w(\tau) \dif \tau$. We will show that $v$ is $\frac{1}{2}$-Hölder-continuous:
 	\begin{align*}
 	\vert v(x_1) - v(x_2) \vert &= \left\vert \int_{a}^{x_1} w(\tau) \dif \tau - \int_{a}^{x_2} w(\tau) \dif \tau \right\vert \\
 	&= \left\vert \int_{x_1}^{x_2} w(\tau) \dif \tau \right\vert \overset{\textnormal{Hölder}}{\leq} \Vert w \Vert_{L^2} \left\vert \int_{x_1}^{x_2} 1 \dif \tau \right\vert ^{\frac{1}{2}} \\
@@ -281,8 +357,10 @@ The Sobolev Spaces are subspaces of the $L^p$-spaces, therefore their elements a
 
 Using these statements, we will henceforth identify elements of $H^k$ with their continuous representatives, allowing for the following statements involving pointwise conditions on elements of this space to be well-defined.
 
+\section{Weak Formulation}
+
 \begin{theorem} Weak Formulation of the Signorini Problem\newline
-	Let $K \coloneqq \left\{ v\in H^1(-1,1) \,|\, v(-1) \geq 0, v(1) \geq 0 \right\}$. Then a solution $u \in K$ of the following variational inequality is a weak solution of \eqref{eq:signorini}:
+	Let $K \coloneqq \left\{ v\in H^1(\Omega) \,|\, v(-1) \geq 0, v(1) \geq 0 \right\}$. Then a solution $u \in K$ of the following variational inequality is a weak solution of \eqref{eq:signorini}:
 	\begin{equation}
 	\int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K \label{eq:variational_inequality}
 	\end{equation}
@@ -331,21 +409,37 @@ We will now formulate this problem as a convex minimization problem in the Sobol
 		&= \lambda(1-\lambda)\norm{v-w}^2
 		\end{align*}
 		This is exactly the definition with modulus of convexity $\phi(\alpha) = \alpha ^2$.
-		
 	\end{proof}
 \end{lemma}
 
+We will need a slightly more general statement about variational inequalities of this form, as we will solve a similar problem but with different boundary conditions for the $L^2$-error estimate. To that end we define the generalized boundary condition set $K^0$.
+
+\begin{definition} Generalized Boundary Conditions \newline
+	A convex subset of functions $K^0 \subseteq H^1(\Omega)$ is said to fulfill the generalized boundary conditions if it is any of the following:
+	\begin{align}
+	\begin{split} \label{eq:generalized_boundary_condition_set}
+	K^0 \in \big\{ &H^1(\Omega), \\
+	\{ &v\in H^1(\Omega) \,|\, v(-1) \geq 0\}, \\
+	\{ &v\in H^1(\Omega) \,|\, v(1) \geq 0 \}, \\
+	\{ &v\in H^1(\Omega) \,|\, v(-1) \geq 0, v(1) \geq 0\}
+	\big\}
+	\end{split}
+	\end{align}
+\end{definition}
+
+Note that, in particular, $K$ fulfills the generalized boundary conditions, and therefore all statements regarding a $K^0$ are also valid for $K$.
+
 \begin{theorem} Equivalent formulation as a convex minimization problem\newline
-	A solution $u \in H^1(-1,1)$ of the following minimization problem is a weak solution of \eqref{eq:signorini}:
+	$u \in H^1(\Omega)$ solves the following minimization problem if and only if it solves a variational inequality of the form \eqref{eq:variational_inequality}, but with a test set $K^0$:
 	\begin{equation} \label{eq:minimization_problem}
-	\min_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v)
+	\min_{v \in K^0} F(v)
 	\end{equation}
 	The functional $F$ can be understood as the energy functional. This is a convex problem.
 	\begin{proof}
-	We start with the variational inequality \eqref{eq:variational_inequality}:
+	We start with the slight modification of the variational inequality \eqref{eq:variational_inequality}:
 	\begin{align*}
-		&\int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K \\
-		\Longleftrightarrow & \int_{-1}^1 u'v' - (u')^2 + uv - u^2 - fv - fu \dif x \geq 0 \quad \forall v \in K \\
+		&\int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K^0 \\
+		\Longleftrightarrow & \int_{-1}^1 u'v' - (u')^2 + uv - u^2 - fv - fu \dif x \geq 0 \quad \forall v \in K^0 \\
 	\end{align*}
 	We will now use the Young inequality to bound the integral from above:
 	\begin{equation}
@@ -353,16 +447,16 @@ We will now formulate this problem as a convex minimization problem in the Sobol
 	\end{equation}
 	This follows directly from the binomial formula. Using it on the variational inequality yields the following:
 	\begin{align*}
-	&\int_{-1}^1 \frac{1}{2} (u')^2 + \frac{1}{2} (v')^2 - (u')^2 + \frac{1}{2} u^2 + \frac{1}{2} v^2 - u^2 - fv - fu \dif x \geq 0 \quad \forall v \in K \\
-	\Longleftrightarrow & \int_{-1}^1 \frac{1}{2} (v')^2 + \frac{1}{2} v^2 - fv \dif x \geq \int_{-1}^1 \frac{1}{2} (u')^2 + \frac{1}{2} u^2 - fu \dif x \quad \forall v \in K
+	&\int_{-1}^1 \frac{1}{2} (u')^2 + \frac{1}{2} (v')^2 - (u')^2 + \frac{1}{2} u^2 + \frac{1}{2} v^2 - u^2 - fv - fu \dif x \geq 0 \quad \forall v \in K^0 \\
+	\Longleftrightarrow & \int_{-1}^1 \frac{1}{2} (v')^2 + \frac{1}{2} v^2 - fv \dif x \geq \int_{-1}^1 \frac{1}{2} (u')^2 + \frac{1}{2} u^2 - fu \dif x \quad \forall v \in K^0
 	\end{align*}
 	Or, equivalently:
 	\begin{equation*}
-	F(v) \geq F(u) \quad \forall v \in K 
-	\quad \Longleftrightarrow \quad u = \argmin_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v)
+	F(v) \geq F(u) \quad \forall v \in K^0
+	\quad \Longleftrightarrow \quad u = \argmin_{v \in K^0} F(v)
 	\end{equation*}
 	
-	For the other direction of the proof let $u$ be a solution of \eqref{eq:minimization_problem}. As $u$ is a minimizer, it follows for every $t \geq 0$ and every $v \in K$:
+	For the other direction of the proof let $u$ be a solution of \eqref{eq:minimization_problem}. As $u$ is a minimizer, it follows for every $t \geq 0$ and every $v \in K^0$:
 	\begin{equation*}
 	\frac{F(u+t(v-u)) - F(u)}{t} \geq 0
 	\end{equation*}
@@ -375,19 +469,20 @@ We will now formulate this problem as a convex minimization problem in the Sobol
 	 &\phantom{\lim\limits_{t \rightarrow 0} \frac{1}{t} \Bigg( 
 		\int_{-1}^{1}} -\frac{1}{2}(u')^2  - \frac{1}{2}u^2 + fu \dif x \Bigg) \\
 	= &\lim\limits_{t \rightarrow 0} \int_{-1}^1 \frac{1}{2} t(v'-u')^2 + u'(v'-u') + \frac{1}{2}t(v-u)^2 + u(v-u) -f(v-u) \dif x \\
-	= & 	\int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K
+	= & 	\int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K^0
 	\end{align*}
 	\endgroup
 	This is exactly the required form, and the equivalence of the two formulations follows.
 	\end{proof}
 \end{theorem}
 
+\section{Existence and Properties of the Solution}
 \begin{theorem}\thlabel{thm:unique_solution_signorini} Existence of a unique solution to the Signorini Problem \newline
-	The weak formulation of the Signorini Problem \eqref{eq:minimization_problem} has a unique solution $u \in H^1(-1,1)$
+	A minimization problem of the form \eqref{eq:minimization_problem}, such as the weak formulation of the Signorini Problem, has a unique solution $u \in H^1(\Omega)$
 	\begin{proof}
 		We will prove this using the Direct Method in the Calculus of Variations. In a first step, we will show that the functional $F$ is bounded from below. To this avail define $\{v_n\}_{n\in \mathbb{N}} \subset H^1(\Omega)$ such that: 
 		\begin{equation*}
-		v_n(\pm 1) \geq 0\textnormal{,} \quad \lim\limits_{n \rightarrow \infty} F(v_n) = \inf_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v)
+		v_n(\pm 1) \geq 0\textnormal{,} \quad \lim\limits_{n \rightarrow \infty} F(v_n) = \inf_{v ?in K^0} F(v)
 		\end{equation*} 
 		Then there exists a constant $C$ such that:
 		\begin{align*}
@@ -402,7 +497,7 @@ We will now formulate this problem as a convex minimization problem in the Sobol
 		
 		Let $\{\tilde{v}_n\}_{n\in \mathbb{N}} $ be the weakly convergent subsequence such that $\tilde{v}_n \rightharpoonup u$. Then the claim follows, by definition of weak convergence and lower semi-continuity:
 		\begin{equation*}
-		\inf_{\substack{v \in H^1(-1,1) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v) =  \liminf\limits_{n\rightarrow\infty} F(\tilde{v}_n) \geq F(u)
+		\inf_{v \in K^0} F(v) =  \liminf\limits_{n\rightarrow\infty} F(\tilde{v}_n) \geq F(u)
 		\end{equation*}
 		
 		The uniqueness of the solution follows from the strict convexity of the functional \cite{aubin79}.
@@ -412,12 +507,11 @@ We will now formulate this problem as a convex minimization problem in the Sobol
 Now we will see that without any further assumptions, the weak solution to the Signorini Problem is actually in $H^2$ and its norm is bound by the right hand side $f$.
 
 \begin{theorem} $H^2$-regularity of the solution to the Signorini Problem \newline
-	Let $u \in H^1(\Omega)$ be the solution to \eqref{eq:minimization_problem}. Then the following holds:
+	Let $u \in H^1(\Omega)$ be the solution to \eqref{eq:minimization_problem}. Then the following holds for $C \in \mathbb{R}_{>0}$:
 	\begin{align}
 		u &\in H^2(\Omega) \label{eq:H2_regularity} \\
 		\norm{u}_{H^2(\Omega)} &\leq C\norm{f}_{L^2(\Omega)} \label{eq:H2_norm_bound_by_f} 
 	\end{align}
-	for $C \in \mathbb{R}_{>0}$.
 	\begin{proof}
 		$u \in H^1(\Omega)$ be the solution to \eqref{eq:minimization_problem}. Then it is also the solution of \eqref{eq:variational_inequality} and therefore fulfills the following:
 		\begin{equation*}
@@ -436,16 +530,20 @@ Now we will see that without any further assumptions, the weak solution to the S
 		
 		Using $u'' = f-z$, the characterizing equation of the weak derivative and \eqref{eq:H1_bound_by_f} we obtain:
 		\begin{align*}
-			\norm{u}_{H^2(\Omega)}\overset{\eqref{eq:sobolev1_norm}}&{=} \norm{u}_{H^1(\Omega)} + \norm{u''}_{L^2(\Omega)} \\ 
-			\overset{\substack{\text{Cauchy} \\ \text{Schwarz}}}&{\leq} 2\norm{u}_{H^1(\Omega)} + \norm{f}_{L^2(\Omega)} \\
-			&\overset{\eqref{eq:H1_bound_by_f}}{\leq} C \norm{f}_{L^2(\Omega)}
+			\norm{u}_{H^2(\Omega)}\overset{\eqref{eq:sobolev1_norm}}{=} \norm{u}_{H^1(\Omega)} + \norm{u''}_{L^2(\Omega)} 
+			\overset{\substack{\text{Cauchy} \\ \text{Schwarz}}}{\leq} 2\norm{u}_{H^1(\Omega)} + \norm{f}_{L^2(\Omega)} 
+			\overset{\eqref{eq:H1_bound_by_f}}{\leq} C \norm{f}_{L^2(\Omega)}
 		\end{align*}
 	\end{proof}
 \end{theorem}
 
 
 \chapter{Discretization}
-We will now consider a discretization of the Signorini Problem. To that end, we will restrict the solution space to $V_h \coloneqq \{z \in C([-1,1]) \, | \, z \,\, \text{piecewise affine subordinate to a partition} \\ \mathmbox{-1}=x_0<x_1<\dots<x_N = 1 \}$. Furthermore, we will assume a uniform partition with $h = x_{i+1} - x_i$.
+We will now consider a discretization of the Signorini Problem. To that end, we will restrict the solution space to the space of so-called finite element functions $V_h$ with a mesh width $h$, which we assume uniform with $h = x_{i+1} - x_i$:
+\begin{align}
+V_h \coloneqq \{&z \in C([-1,1]) \, | \, \\ 
+	&z \,\, \text{piecewise affine subordinate to a partition} \mathmbox{-1}=x_0<x_1<\dots<x_N = 1 \} \nonumber
+\end{align} 
 
 \begin{definition} Finite Element Space
 We define a basis for the finite element space $V_h$, which are the piecewise linear functions with a bump in the nodes:
@@ -625,7 +723,7 @@ We will therefore derive an upper bound for the error between the Ritz Projectio
 
 \subsection{Supercloseness}
 
-With this representation we can conclude the following supercloseness result: \textcolor{red}{Insert here some text about supercloseness}
+We will use this representation to conclude the following supercloseness result. We will see that the error between the Ritz Projection $R_h(u)$ and the discrete solution $u_h$ is of the same order (in the case of the $L^\infty$-norm), or of higher order (in the case of the $H^1$-norm) than the order of the total error, so we may safely add it in with the triangle inequality.
 
 \begin{lemma} Supercloseness Lemma \newline
 	The $H^1$-error between $u_h$ and the Ritz Projection of $u$ is bounded as follows:
@@ -682,7 +780,7 @@ With this representation we can conclude the following supercloseness result: \t
 
 \subsection{$L^{\infty}$ and $H^1$ Error Estimates}
 
-Firstly we will analyze the $L^{\infty}$ error, which we will subsequently also use to estimate the $H^1$ one.
+Firstly we will analyze the $L^{\infty}$ error, which we will subsequently also use to estimate the $H^1$ error.
 
 \begin{definition} Lagrange-Interpolation \newline
 	For a mesh width $h$ and corresponding nodes $-1=x_0<x_1<\dots<x_N = 1$, where $h = x_{i+1} - x_i$, the Lagrange-Interpolation Operator maps a continuous function to the linear spline interpolating at these nodes. It is uniquely characterized by the value at the nodes $x_i$:
@@ -697,28 +795,28 @@ Firstly we will analyze the $L^{\infty}$ error, which we will subsequently also 
 \begin{lemma} Bound for the $L^\infty$-error of the Ritz Projection \newline
 	There exists a $C \in \mathbb{R}_{>0}$ such that the following holds:
 	\begin{equation} \label{eq:linfty_error_lemma}
-		\norm{u -R_h(u)}_{L^\infty} \leq Ch^{3/2}\norm{u}_{H^2}
+		\norm{u -R_h(u)}_{L^\infty} \leq Ch^{\sfrac{3}{2}}\norm{u}_{H^2}
 	\end{equation}
 	\begin{proof}
 		The main idea is to introduce the Lagrange Interpolate through Minkowski and then to use the Inverse Estimate for Finite Elements, as can be found in a very general setting in \cite{brenner2002mathematical}:
 		\begin{align} \label{eq:lemma6part1}
 		\norm{u -R_h(u)}_{L^\infty} \overset{\text{Minkowski}}&{\leq} \hspace{0.8em} \norm{u -I_h(u)}_{L^\infty} +\norm{I_h(u) -R_h(u)}_{L^\infty} \nonumber \\
 		\overset{\text{\cite[Thm 4.5.11]{brenner2002mathematical}}}&{\leq}
-		\norm{u -I_h(u)}_{L^\infty} + C_1 h^{-1/2}\norm{I_h(u) -R_h(u)}_{L^2} \\
-		\overset{\text{Minkowski}}&{\leq} \hspace{0.8em} \norm{u -I_h(u)}_{L^\infty} + C_1 h^{-1/2}\norm{I_h(u) -u}_{L^2} + C_1 h^{-1/2}\norm{u -R_h(u)}_{L^2} \nonumber
+		\norm{u -I_h(u)}_{L^\infty} + C_1 h^{-\sfrac{1}{2}}\norm{I_h(u) -R_h(u)}_{L^2} \\
+		\overset{\text{Minkowski}}&{\leq} \hspace{0.8em} \norm{u -I_h(u)}_{L^\infty} + C_1 h^{-\sfrac{1}{2}}\norm{I_h(u) -u}_{L^2} + C_1 h^{-\sfrac{1}{2}}\norm{u -R_h(u)}_{L^2} \nonumber
 		\end{align}
 		We now need a suitable estimate for these three parts:
 		\begin{align}\label{eq:lemma6part2}
 		\begin{split}
-			\norm{u -I_h(u)}_{L^\infty} \overset{\text{\cite[Thm 4.4.20]{brenner2002mathematical}}}&{\leq} C_2 h^{3/2}\norm{u}_{H^2} \\
+			\norm{u -I_h(u)}_{L^\infty} \overset{\text{\cite[Thm 4.4.20]{brenner2002mathematical}}}&{\leq} C_2 h^{\sfrac{3}{2}}\norm{u}_{H^2} \\
 			\norm{u -I_h(u)}_{L^2 \phantom{2}} \overset{\text{\cite[Thm 4.4.20]{brenner2002mathematical}}}&{\leq} C_3 h^2\norm{u}_{H^2} \\
 			\norm{u -R_h(u)}_{L^2 \phantom{2}} \overset{\text{\cite[Lemma 3.2]{2019christof}}}&{\leq} C_4 h^2\norm{u}_{H^2} 
 		\end{split}
 		\end{align}
 		Combining \eqref{eq:lemma6part1} and \eqref{eq:lemma6part2} we obtain the desired result:
 		\begin{align*}
-		\norm{u -R_h(u)}_{L^\infty} &\leq 	C_2 h^{3/2}\norm{u}_{H^2} + C_1 C_3 h^{-1/2}h^2\norm{u}_{H^2} + C_1 C_4 h^{-1/2}h^2\norm{u}_{H^2} \\
-		&\leq Ch^{3/2}\norm{u}_{H^2}
+		\norm{u -R_h(u)}_{L^\infty} &\leq 	C_2 h^{\sfrac{3}{2}}\norm{u}_{H^2} + C_1 C_3 h^{-\sfrac{1}{2}}h^2\norm{u}_{H^2} + C_1 C_4 h^{-\sfrac{1}{2}}h^2\norm{u}_{H^2} \\
+		&\leq Ch^{\sfrac{3}{2}}\norm{u}_{H^2}
 		\end{align*}
 	\end{proof}
 \end{lemma}
@@ -726,18 +824,18 @@ Firstly we will analyze the $L^{\infty}$ error, which we will subsequently also 
 \begin{theorem} $L^\infty$ Error Estimate of the Discrete Solution \newline
 	There exists a $C \in \mathbb{R}_{>0}$ such that the following holds:
 	\begin{equation}
-		\norm{u-u_h}_{L^\infty(\Omega)} \leq C h^{3/2}
+		\norm{u-u_h}_{L^\infty(\Omega)} \leq C h^{\sfrac{3}{2}}
 	\end{equation}
 \begin{proof}
 	As one might imagine from the previous results, we will introduce the Ritz projection through the triangle inequality, and then estimate the error from it to both the continuous and the discrete result:
 	\begin{align*}
 	\norm{u-u_h}_{L^\infty(\Omega)} &\leq \norm{u-R_h(u)}_{L^\infty(\Omega)} + \norm{R_h(u) - u_h}_{L^\infty(\Omega)} \\
 	\overset{\eqref{eq:supercloseness} \eqref{eq:linfty_error_lemma}}&{\leq} 
-	C_1 h^{3/2}\norm{u}_{H^2(\Omega)} + C_2 \max \left(\abs{(u-R_h(u))(-1)}, \abs{(u-R_h(u))(1)}\right) \\
-	&\leq C_1 h^{3/2}\norm{u}_{H^2(\Omega)} + C_2 \norm{u-R_h(u)}_{L^\infty(\Omega)} \\
-	\overset{\eqref{eq:linfty_error_lemma}}&{\leq} C_1 h^{3/2}\norm{u}_{H^2(\Omega)}  + C_3 h^{3/2} \norm{u}_{H^2(\Omega)}
+	C_1 h^{\sfrac{3}{2}}\norm{u}_{H^2(\Omega)} + C_2 \max \left(\abs{(u-R_h(u))(-1)}, \abs{(u-R_h(u))(1)}\right) \\
+	&\leq C_1 h^{\sfrac{3}{2}}\norm{u}_{H^2(\Omega)} + C_2 \norm{u-R_h(u)}_{L^\infty(\Omega)} \\
+	\overset{\eqref{eq:linfty_error_lemma}}&{\leq} C_1 h^{\sfrac{3}{2}}\norm{u}_{H^2(\Omega)}  + C_3 h^{\sfrac{3}{2}} \norm{u}_{H^2(\Omega)}
 	\\
-	\overset{\eqref{eq:H2_norm_bound_by_f}}&{\leq} C h^{3/2} \norm{f}_{L^2(\Omega)}
+	\overset{\eqref{eq:H2_norm_bound_by_f}}&{\leq} C h^{\sfrac{3}{2}} \norm{f}_{L^2(\Omega)}
 	\end{align*}
 	Since $f$ was fixed, the result follows.
 \end{proof}
@@ -755,8 +853,8 @@ The $H^1$ error follows directly from the above bound and the interpolation erro
 		\norm{u-u_h}_{H^1(\Omega)} &\leq \norm{u-R_h(u)}_{H^1(\Omega)} + \norm{R_h(u) - u_h}_{H^1(\Omega)} \\
 		\overset{\eqref{eq:supercloseness}}&{\leq} \norm{u-R_h(u)}_{H^1(\Omega)} + C_1 \max \left(\abs{(u-R_h(u))(-1)}, \abs{(u-R_h(u))(1)}\right) \\
 		&\leq \norm{u-R_h(u)}_{H^1(\Omega)} + C_1 \norm{u-R_h(u)}_{L^\infty(\Omega)} \\
-		\overset{\eqref{eq:ritz_minimization} \eqref{eq:linfty_error_lemma}}&{\leq} \norm{I_h(u) - R_h(u)}_{H^1(\Omega)} + C_1 h^{3/2} \norm{u}_{H^2(\Omega)} \\
-		\overset{\text{\cite[Thm 4.4.20]{brenner2002mathematical}}}&{\leq} C_2 h + C_1 h^{3/2}\norm{u}_{H^2(\Omega)} \\
+		\overset{\eqref{eq:ritz_minimization} \eqref{eq:linfty_error_lemma}}&{\leq} \norm{I_h(u) - R_h(u)}_{H^1(\Omega)} + C_1 h^{\sfrac{3}{2}} \norm{u}_{H^2(\Omega)} \\
+		\overset{\text{\cite[Thm 4.4.20]{brenner2002mathematical}}}&{\leq} C_2 h + C_1 h^{\sfrac{3}{2}}\norm{u}_{H^2(\Omega)} \\
 		\overset{\eqref{eq:H2_norm_bound_by_f}}&{\leq} C h \norm{f}_{L^2(\Omega)}
 		\end{align*}
 		Since $f$ was fixed, the result follows.
@@ -765,26 +863,69 @@ The $H^1$ error follows directly from the above bound and the interpolation erro
 
 \section{$L^2$ Error Through Duality}
 
-The estimation of the $L^2$ error is more involved. We will follow the lines of \cite{2019christof}, which in turn follows \cite[Section 7]{mosco2006}, who proposed this approach for a similar obstacle problem. The key idea is to formulate two so-called dual variational inequalities, one for the positive component $\max(0, u-u_h)$ and one for the negative component $\min(0, u-u_h)$ of the error. From these we will derive useful inequalities. For simplicity, we consider only the positive component, as it is completely analogous to the negative one.
+The estimation of the $L^2$ error is more involved. We will follow the lines of \cite{2019christof}, which in turn follows \cite[Section 7]{mosco2006}, who proposed this approach for a similar obstacle problem. The key idea is to formulate two so-called dual variational inequalities, one for the positive component $\max(0, u-u_h)$ and one for the negative component $\min(0, u-u_h)$ of the error. From these we will derive useful inequalities.
 
-\begin{definition} The Dual Problem \newline
-	Let $L \coloneqq \left\{ v \in H^1(-1,1) \,|\, v(\pm 1) \geq 0 \,\,\text{if}\,\, u(\pm 1) = 0 \right\}$.Then we define the dual problem as follows:
-	\begin{equation} \label{eq:dual_variational_inequality}
-		z \in L,\quad (z,v-z)_{H^1(\Omega)} \geq (-\max(0,u-u_h),v-z)_{L^2(\Omega)} \quad \forall v \in L
-	\end{equation}
+\begin{definition} The Dual Problems \newline
+	Let $L \coloneqq \left\{ v \in H^1(\Omega) \,|\, v(\pm 1) \geq 0 \,\,\text{if}\,\, u(\pm 1) = 0 \right\}$.Then we define the dual problem as follows:
+	\begin{align} 
+		z \in L,\quad (z,v-z)_{H^1(\Omega)} \geq (-\max(0,u-u_h),v-z)_{L^2(\Omega)} \quad \forall v \in L \label{eq:dual_variational_inequality} \\
+		z \in L,\quad (z,v-z)_{H^1(\Omega)} \geq (-\min(0,u-u_h),v-z)_{L^2(\Omega)} \quad \forall v \in L
+	\end{align}
 \end{definition}
+
+Firstly, we will need some tools to relate a function to its positive and negative components:
+
+\begin{lemma} Stampacchia's Lemma \newline
+	Let $u \in H^1(\Omega)$. Then the following holds:
+	\begin{align}
+	\begin{split} \label{eq:stampacchia_H1}
+	\max(0,u) &\in H^1(\Omega) \\
+	\min(0,u) &\in H^1(\Omega)
+	\end{split} \\
+	\nonumber \\ 
+	\begin{split} \label{eq:stampacchia_derivative}
+	\left(\max(0,u)\right)' = \max(0,u') &= \begin{cases}
+	u' &\text{in}\,\, \{u > 0\}, \\
+	0  &\text{in}\,\, \{u \leq 0\}
+	\end{cases} \\
+	\left(\min(0,u)\right)' = \min(0,u') &= \begin{cases}
+	u' &\text{in}\,\, \{u < 0\}, \\
+	0  &\text{in}\,\, \{u \geq 0\}
+	\end{cases}
+	\end{split}
+	\end{align}
+	\begin{proof}
+		There are many theorems referred to as ``Stampacchia's Lemma'' in the literature. This is the one found in \cite[Theorem A.1]{KinderlehrerStampacchia} and \cite[Theorem 5.8.2]{Attouch09}.
+	\end{proof}
+\end{lemma}
+
+
+For simplicity, for the remainder of this section, we will consider only the positive component, as it is completely analogous to the negative one, and all claims regarding the one are also trivially true for the other.
 
 \begin{lemma}Existence of a Unique Dual Solution \newline 
 	The dual problem \eqref{eq:dual_variational_inequality} admits a unique solution $z \in H^2(\Omega)$ for all $h > 0$. Furthermore, for this solution it holds that:
 	\begin{equation} \label{eq:dual_solution_nonpositive}
-		z \leq 0 \quad \text{in} \quad \bar{\Omega}
+	z \leq 0 \quad \text{in} \quad \bar{\Omega}
 	\end{equation}
 	\begin{proof}
-		Fixing a $h>0$, this follows from \thref{thm:unique_solution_signorini}, taking into account that $-\max(0,u-u_h) \in L^2(\Omega)$. \textcolor{red}{TODO: Adapt thm s.th. the side conditions are more lax}.
+		Fixing a $h>0$, the existence and uniqueness of a solution follows from \thref{thm:unique_solution_signorini}, taking into account that $-\max(0,u-u_h) \in L^2(\Omega)$, and that $L$ always fulfills the generalized boundary conditions, independently of $u$.
 		
-		For the proof of the inequality \textcolor{red}{QUESTION: In the paper this is only proved $L^2$ a.e., how might I go about proving this? (Or at least on $\partial\Omega$)}
+		For the proof of the inequality, let $z$ be the unique solution, note that $v \coloneqq \min(0,z) \in L$ and test with it in \eqref{eq:dual_variational_inequality}, taking into account that $v - \min(0,v) = \max(0,v)$:
+		\begin{align*}
+			-(z,\max(0,z))_{H^1(\Omega)} &\geq (\max(0,u-u_h), \max(0,z))_{L^2(\Omega)} 
+		\end{align*}
+		Multiplying by $-1$, and applying Stampacchia's Lemma, we obtain:
+		\begin{align*}
+		\norm{\max(0,z)}_{H^1(\Omega)}^2 \overset{\eqref{eq:stampacchia_derivative}}{=} (z,\max(0,z))_{H^1(\Omega)} \leq - (\max(0,u-u_h), \max(0,z))_{L^2(\Omega)} \leq 0
+		\end{align*}
+		This implies the following:
+		\begin{equation*}
+		\norm{\max(0,z)}_{H^1(\Omega)}^2 \overset{\eqref{eq:sobolev1_norm}}{=}\norm{\max(0,z)}_{L^2(\Omega)}^2 + \norm{\left(\max(0,z)\right)'}_{L^2(\Omega)}^2 = 0
+		\end{equation*}
+		We see that the positive part of $z$ disappears $\mathcal{L}$-a.e., which implies the claim by taking the continuous representative of $z$ provided by the Sobolev embedding \eqref{eq:sobolev1_embedding}.
 	\end{proof}
 \end{lemma}
+
 
 We will now consider a solution $z \in H^2(\Omega)$ of \eqref{eq:dual_variational_inequality}, and test appropriate functions containing it in all three variational inequalities to obtain the following inequalities relating the $L^2$ to the $H^1$ error:
 
@@ -797,7 +938,11 @@ We will now consider a solution $z \in H^2(\Omega)$ of \eqref{eq:dual_variationa
 		\norm{\max(0,u-u_h)}_{L^2(\Omega)}^2 &\leq (z-I_h(z), u_h - u)_{H^1(\Omega)} \label{eq:scalar_product_ineq_L2}
 	\end{align}
 	\begin{proof}
-		For the first inequality, we test \eqref{eq:dual_variational_inequality} against $z+u_h-u$. This function is in $L$ \textcolor{red}{QUESTION: Why?}. The claim follows:
+		For the first inequality, we test \eqref{eq:dual_variational_inequality} against $z+u_h-u$. This function is in $L$. This only needs to be proven for the case where there are boundary conditions to be enforced, i.e. $u(1) = 0$ or $u(-1) = 0$. W.l.o.g. let $u(1) = 0$: 
+		\begin{equation*}
+		(z + u_h - u)(1) \overset{u(1) = 0}{=} (z + u_h)(1) \overset{z \in L,\, \eqref{eq:dual_solution_nonpositive}}{=} (u_h)(1) \overset{u_h \in K}{\geq} 0
+		\end{equation*}
+		The claim follows:
 		\begin{align*}
 		(z, u_h-u)_{H^1(\Omega)} &\geq (-\max(0,u-u_h), u_h-u)_{L^2(\Omega)} \\
 		&= (\max(0,u_h-u), u-u_h)_{L^2(\Omega)} \\
@@ -826,15 +971,15 @@ We will now consider a solution $z \in H^2(\Omega)$ of \eqref{eq:dual_variationa
 		\norm{\max(0,u-u_h)}_{L^2(\Omega)}^2 \overset{\eqref{eq:scalar_product_ineq_L2}}&{\leq} (z-I_h(z),u_h-u)_{H^1(\Omega)} \\
 		\overset{\begin{subarray}{c} \text{Cauchy-}\\ \text{Schwarz}
 			\end{subarray}}&{\leq} \norm{z-I_h(z)}_{H^1(\Omega)} \norm{u_h - u}_{H^1(\Omega)} \\
-			\overset{\text{\textcolor{red}{REF}} \eqref{eq:H1_error}}&{\leq} C_1h \norm{z}_{H^2(\Omega)} Ch \\
-			\overset{\text{\textcolor{red}{REF}}}&{\leq} Ch^2 \norm{\max(0,u-u_h)}_{L^2(\Omega)}
+			\overset{\substack{\text{\cite[Thm 4.4.20]{brenner2002mathematical}} \\ \eqref{eq:H1_error}}}&{\leq} C_1h \norm{z}_{H^2(\Omega)} C_2h 
+			\overset{\eqref{eq:H2_norm_bound_by_f}}{\leq} Ch^2 \norm{\max(0,u-u_h)}_{L^2(\Omega)}
 		\end{align*}
 		Dividing both sides by $\norm{\max(0,u-u_h)}_{L^2(\Omega)}$ yields the claim.
 	\end{proof}
 \end{corollary}
 
 \begin{theorem}
-	 $L^2$ Error for the Positive Component \newline
+	 $L^2$ Error for the Whole Solution \newline
 	Let $u \in H^2(\Omega)$ be a solution of \eqref{eq:variational_inequality} for some $f \in L^2(\Omega)$ and $u_h \in V_h$ the solution of \eqref{eq:discrete_variational_inequality} for the same $f$. Then it holds:
 	\begin{equation}
 	\norm{u-u_h}_{L^2(\Omega)} \leq Ch^2
@@ -873,7 +1018,7 @@ In this paper we have analyzed the convergence order of this method in three nor
 
 In the first case we analye $\norm{u-u_h}_*$. The $L^\infty$ norm is approximated as follows:
 \begin{align}
-\norm{u-u_h}_{L^\infty(\Omega)} &\approx \\ &\max \left\{\abs{u(x) - u_h(x)} \,|\, x \in \{-1 = x_0,\dots, x_n = 1, x_{i+1} - x_i = h/1000\} \right\} \nonumber 
+\norm{u-u_h}_{L^\infty(\Omega)} &\approx \\ &\max \left\{\abs{u(x) - u_h(x)} \,|\, x \in \{-1 = x_0,\dots, x_n = 1, x_{i+1} - x_i = \sfrac{h}{1000}\} \right\} \nonumber 
 \end{align}
 It is important that the mesh is finer than the one used for the finite-dimensional problem, since obviously the most divergence will be found between the nodes.
 
@@ -888,16 +1033,22 @@ The $L^2$ and $H^1$ norms are approximated also using \verb|quadgk|, here also o
 
 In the second case, we can actually calculate the norms exactly, as we are dealing with infinite dimensional spaces. Let $\tilde{h}$ be the mesh width of the reference solution. The key idea is to embed the current approximate solution $u_h \in V_h$, which is of course just a vector $\mathbf{v}^h \in \mathbb{R}^{\mathrm{dim}\, V_h}$ into $V_{\tilde{h}}$. This can be done if the chosen mesh widths are all a negative power of two, and therefore the nodes in the lesser dimensional space are also nodes in the higher one. The nodes in between can be calculated by linear interpolation as follows:
 \begin{align*}
-	\mathbf{v}^{h/2} = \left(\mathbf{v}^h_0, \frac{\mathbf{v}^h_0 + \mathbf{v}^h_1}{2} , \mathbf{v}^h_1, \dots, \mathbf{v}^h_{N-1}, \frac{\mathbf{v}^h_{N-1} + \mathbf{v}^h_N}{2}, \mathbf{v}^h_N \right)
+	\mathbf{v}^{\sfrac{h}{2}} = \left(\mathbf{v}^h_0, \frac{\mathbf{v}^h_0 + \mathbf{v}^h_1}{2} , \mathbf{v}^h_1, \dots, \mathbf{v}^h_{N-1}, \frac{\mathbf{v}^h_{N-1} + \mathbf{v}^h_N}{2}, \mathbf{v}^h_N \right)
 \end{align*}
 
-In Matlab \verb|interp1| is used, which does several interpolation steps, avoiding the need for recursion.If we denote the reference solution vector as $\mathbf{v}^{\tilde{h}}$ and the interpolation of a lower dimensional one into $V_{\tilde{h}}$ as $\tilde{\mathbf{v}}^h$, then the norms can be exactly calculated as follows:
+In Matlab \verb|interp1| is used, which does several interpolation steps, avoiding the need for recursion. If we denote the reference solution vector as $\mathbf{v}^{\tilde{h}}$ and the interpolation of a lower dimensional one into $V_{\tilde{h}}$ as $\tilde{\mathbf{v}}^h$, then the norms can be exactly calculated as follows:
 \begin{align}
-\norm{u_{\tilde{h}} - u_h}_{L^\infty(\Omega)} &= \max_{i \in \{0,\dots,\mathrm{dim} \, V_{\tilde{h}}\}} \abs{\mathbf{v}^{\tilde{h}}_i - \tilde{\mathbf{v}}^h_i} \\
-\norm{u_{\tilde{h}} - u_h}_{L^2(\Omega)} &=  \sqrt{(\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)^T B_1 (\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)}\\
-\norm{u_{\tilde{h}} - u_h}_{H^1(\Omega)} &= \sqrt{(\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)^T (B_1+B_2) (\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)}
+	\norm{u_{\tilde{h}} - u_h}_{L^\infty(\Omega)} &= \max_{i \in \{0,\dots,\mathrm{dim} \, V_{\tilde{h}}\}} \abs{\mathbf{v}^{\tilde{h}}_i - \tilde{\mathbf{v}}^h_i} \\
+	\norm{u_{\tilde{h}} - u_h}_{L^2(\Omega)} &=  \sqrt{(\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)^T B_1 (\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)}\\
+	\norm{u_{\tilde{h}} - u_h}_{H^1(\Omega)} &= \sqrt{(\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)^T (B_1+B_2) (\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)}
 \end{align}
 The first result follows simply from the piecewise linearity of the involved functions. The second and third one follow from \eqref{eq:matrix_formulation}, since $B_1$ and $B_1 + B_2$ are transformation matrices for the $L^2$ and $H^1$ scalar products, respectively.
+
+Once we have computed the norms, we may consider the Experimental Orders of Convergence (EOCs), which are defined for a sequence of mesh widths $(h_i)_{i=1}^N$, in our case $h_i = \sfrac{1}{2^i}$, and every norm as the following quantities:
+
+\begin{equation}
+	(\mathrm{EOC})_{h_k,\,\norm{\cdot}_*} \coloneqq \frac{\log \lVert u-u_{h_k}\rVert_* - \lVert\log u-u_{h_{k-1}}\rVert_* }{\log h_k - \log h_{k-1}}
+\end{equation}
 
 \section{Results}
 Firstly, we will try to analyze the method using a right hand side $f$ which allows for an analytical classical solution, and can therefore be used as a reference in our numerical experiments. We will therefore consider the following instance of the Signorini Problem:
@@ -914,6 +1065,7 @@ For some $c_1,c_2 \in \mathbb{R}$. Enforcing the boundary conditions leads to th
 c_1 = - \frac{e^3\cos(1) - e^1\sin(1)}{2(e^4 + 1)}, \quad c_2 = \frac{e^1\cos(1) + e^3\sin(1)}{2(e^4 + 1)}
 \end{align*}
 
+\pagebreak
 \begin{figure}[h!]
 	\centerfloat
 	\begin{tabular}{c@{\hskip -1em}c}
@@ -923,17 +1075,129 @@ c_1 = - \frac{e^3\cos(1) - e^1\sin(1)}{2(e^4 + 1)}, \quad c_2 = \frac{e^1\cos(1)
 \end{figure}
 
 \begin{figure}[h!]
+	\centering
+		\bgroup
+		\def\arraystretch{1.3}
+		\begin{tabular}{cccc}
+			\hline
+			$h$ & $L^\infty(\Omega)$ & $H^1(\Omega)$ & $L^2(\Omega)$ \\
+			\hline
+			$\sfrac{1}{2}$      	&	\num{1.9989e-02}	&	\num{6.0676e-02}	&	\num{1.2335e-02}\\
+			$\sfrac{1}{2^2}$	&	\num{5.7357e-03}	&	\num{3.5344e-02}	&	\num{3.1109e-03}	\\
+			$\sfrac{1}{2^3}$	&	\num{1.5349e-03}	&	\num{1.9586e-02}	&	\num{7.7933e-04}	\\
+			$\sfrac{1}{2^4}$	&	\num{3.9704e-04}	&	\num{1.0339e-02}	&	\num{1.9493e-04}	\\
+			$\sfrac{1}{2^5}$	&	\num{1.0097e-04}	&	\num{5.3138e-03}	&	\num{4.8739e-05}	\\
+			$\sfrac{1}{2^6}$	&	\num{2.5460e-05}	&	\num{2.6938e-03}	&	\num{1.2185e-05}	\\
+			$\sfrac{1}{2^7}$	&	\num{6.3924e-06}	&	\num{1.3562e-03}	&	\num{3.0463e-06}	\\
+			$\sfrac{1}{2^8}$	&	\num{1.6015e-06}	&	\num{6.8046e-04}	&	\num{7.6157e-07}	\\
+			$\sfrac{1}{2^9}$	&	\num{4.0081e-07}	&	\num{3.4082e-04}	&	\num{1.9039e-07}	\\
+			$\sfrac{1}{2^{10}}$	&	\num{1.0026e-07}	&	\num{1.7056e-04}	&	\num{4.7594e-08}	\\						
+			\end{tabular}
+			\egroup 
+	\caption[Errors for  $f = \sin$]{Absolute errors between a finite element solution $u_h$ of mesh width $h$ and the exact solution $u$ for a right hand side $f = \sin$.}
+\end{figure}
+\pagebreak
+
+\begin{figure}[h!] 
+	\centering
+	\bgroup
+	\def\arraystretch{1.3}
+	\begin{tabular}{cccc}
+		\hline
+		$h$ & $L^\infty(\Omega)$ & $H^1(\Omega)$ & $L^2(\Omega)$ \\
+		\hline
+		$\sfrac{1}{2}$      	&	-	&	-	&	- \\
+		$\sfrac{1}{2^2}$	&	\num{1.8012}	&	\num{0.7797}	&	\num{1.9873} \\
+		$\sfrac{1}{2^3}$	&	\num{1.9018}	&	\num{0.8516}	&	\num{1.9970} \\
+		$\sfrac{1}{2^4}$	&	\num{1.9508}	&	\num{0.9216}	&	\num{1.9993} \\
+		$\sfrac{1}{2^5}$	&	\num{1.9753}	&	\num{0.9603}	&	\num{1.9998} \\
+		$\sfrac{1}{2^6}$	&	\num{1.9876}	&	\num{0.9801}	&	\num{2.0000} \\
+		$\sfrac{1}{2^7}$	&	\num{1.9938}	&	\num{0.9900}	&	\num{2.0000} \\
+		$\sfrac{1}{2^8}$	&	\num{1.9969}	&	\num{0.9950}	&	\num{2.0000} \\
+		$\sfrac{1}{2^9}$	&	\num{1.9985}	&	\num{0.9975}	&	\num{2.0000} \\
+		$\sfrac{1}{2^{10}}$	&	\num{1.9992}	&	\num{0.9988}	&	\num{2.0001} \\
+		\hline
+		regr. & $1$ & $1$ & $1$ \\
+		\hline										
+		theo. & $1.5$ & $1$ & $2$
+	\end{tabular}
+	\egroup
+	\caption[EOCs for  $f = \sin$]{Experimental orders of convergence (EOCs) for a sequence of finer finite element approximations $u_h$ of mesh width $h$ to the exact solution $u$ for a right hand side $f = \sin$.}
+	\label{fig:eocs_sin}
+\end{figure}
+
+The table shown in Figure \ref{fig:eocs_sin} shows surprising results. While the convergence orders of the $H^1$-error and the $L^2$-error seem to fit the predictions nicely, the $L^\infty$-error converges too quickly. This apparently contradicts the prediction, that a convergence order of $\sfrac{3}{2}$ is optimal in the general case. 
+
+The answer to this apparent contradiction lies exactly there, this is a special case since the right hand side $f = \sin$ lies also in $L^\infty(\Omega)$, and not only in $L^2(\Omega)$. Using the same argument we used in \eqref{eq:H2_regularity}, we can show that the solution consequently not only lies in $H^2(\Omega)$, but also in $W^{2,\infty}(\Omega)$, and its $H^2$-norm can also be bound by the $L^\infty$-norm of the right hand side. 
+
+Consequently, the same arguments used to show the convergence order of $2$ for a function in $H^2(\Omega)$ w.r.t. the $L^2$-norm can be used to show that convergence order for a function in $W^{2,\infty}(\Omega)$ w.r.t. the $L^\infty$-norm, since we have the stronger bound for the $H^2$-norm of the solution.
+
+We will therefore consider a right hand side $f \notin L^\infty(\Omega)$, or at least a function very close to one to avoid numerical anomalies. We achieve this with $f = \abs{x}^{\sfrac{1}{2} - \epsilon}$ (with $\epsilon = \sfrac{1}{1000}$). The Signorini problem does not have a simple analytical solution with this right hand side, however, so we will, as hinted in the previous section, construct a reference solution with a much finer mesh width $\tilde{h} = \sfrac{1}{2^{12}}$, and approximate the error of the coarser approximations using it.
+
+\begin{figure}[h!]
 	\centerfloat
 	\begin{tabular}{c@{\hskip -1em}c}
 		\input{L2_function_sol.tex} & \input{L2_function_sol_derivative.tex}	
 	\end{tabular}
-	\caption[Solution to $f = \abs{x}^{\frac{1}{2} - \epsilon}$]{To the left, the right hand side of the problem $f = \abs{x}^{0.499}$, the reference solution $u_{\tilde{h}}$, and a discrete solution $u_h$. To the right, the derivatives of the reference and discrete solutions (with a different mesh width for illustrative purposes).}
+	\caption[Solution to $f = \abs{x}^{\sfrac{1}{2} - \epsilon}$]{To the left, the right hand side of the problem $f = \abs{x}^{0.499}$, the reference solution $u_{\tilde{h}}$, and a discrete solution $u_h$. To the right, the derivatives of the reference and discrete solutions (with a different mesh width for illustrative purposes).}
 \end{figure}
 
-\chapter{Anhang}
+\begin{figure}
+	\centering
+	\bgroup
+	\def\arraystretch{1.3}
+	\begin{tabular}{cccc}
+		\hline
+		$h$ & $L^\infty(\Omega)$ & $H^1(\Omega)$ & $L^2(\Omega)$ \\
+		\hline
+		$\sfrac{1}{2}$      &	\num{1.6742e-02}	&	\num{1.2787e-01}	&	\num{1.4965e-02} \\
+		$\sfrac{1}{2^2}$	&	\num{9.1475e-03}	&	\num{8.5222e-02}	&	\num{5.7176e-03} \\
+		$\sfrac{1}{2^3}$	&	\num{4.6159e-03}	&	\num{5.3941e-02}	&	\num{1.9150e-03} \\
+		$\sfrac{1}{2^4}$	&	\num{2.0228e-03}	&	\num{3.2449e-02}	&	\num{5.9309e-04} \\
+		$\sfrac{1}{2^5}$	&	\num{8.1881e-04}	&	\num{1.8801e-02}	&	\num{1.7485e-04} \\
+		$\sfrac{1}{2^6}$	&	\num{3.1625e-04}	&	\num{1.0603e-02}	&	\num{4.9880e-05} \\
+		$\sfrac{1}{2^7}$	&	\num{1.1865e-04}	&	\num{5.8610e-03}	&	\num{1.3901e-05} \\
+		$\sfrac{1}{2^8}$	&	\num{4.3684e-05}	&	\num{3.1871e-03}	&	\num{3.8035e-06} \\
+		$\sfrac{1}{2^9}$	&	\num{1.5682e-05}	&	\num{1.7037e-03}	&	\num{1.0208e-06} \\
+		$\sfrac{1}{2^{10}}$	&	\num{5.6627e-06}	&	\num{8.8349e-04}	&	\num{2.6405e-07} 
+	\end{tabular}
+	\egroup 
+	\caption[Errors for  $f = \abs{x}^{\sfrac{1}{2} - \epsilon}$]{Absolute errors between a finite element solution $u_h$ of mesh width $h$ and a reference solution $u_{\tilde{h}}$ for a right hand side $f = \abs{x}^{\sfrac{1}{2} - \epsilon}$.}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\bgroup
+	\def\arraystretch{1.3}
+	\begin{tabular}{cccc}
+		\hline
+		$h$ & $L^\infty(\Omega)$ & $H^1(\Omega)$ & $L^2(\Omega)$ \\
+		\hline
+		$\sfrac{1}{2}$      &	-		&		-		&		- \\
+		$\sfrac{1}{2^2}$	&	\num{0.8720}		&		\num{0.5854}		&		\num{1.3881} \\
+		$\sfrac{1}{2^3}$	&	\num{0.9868}		&		\num{0.6598}		&		\num{1.5780} \\
+		$\sfrac{1}{2^4}$	&	\num{1.1903}		&		\num{0.7332}		&		\num{1.6910} \\
+		$\sfrac{1}{2^5}$	&	\num{1.3047}		&		\num{0.7873}		&		\num{1.7621} \\
+		$\sfrac{1}{2^6}$	&	\num{1.3725}		&		\num{0.8263}		&		\num{1.8096} \\
+		$\sfrac{1}{2^7}$	&	\num{1.4144}		&		\num{0.8553}		&		\num{1.8433} \\
+		$\sfrac{1}{2^8}$	&	\num{1.4415}		&		\num{0.8789}		&		\num{1.8698} \\
+		$\sfrac{1}{2^9}$	&	\num{1.4780}		&		\num{0.9036}		&		\num{1.8976} \\
+		$\sfrac{1}{2^{10}}$	&	\num{1.4696}		&		\num{0.9474}		&		\num{1.9509} \\
+		\hline
+		regr. & $1$ & $1$ & $1$ \\
+		\hline										
+		theo. & $1.5$ & $1$ & $2$
+	\end{tabular}
+	\egroup
+	\caption[EOCs for  $f = \abs{x}^{\sfrac{1}{2} - \epsilon}$]{Experimental orders of convergence (EOCs) for a sequence of finer finite element approximations $u_h$ of mesh width $h$ to the reference solution $u_{\tilde{h}}$ for a right hand side $f = \abs{x}^{\sfrac{1}{2} - \epsilon}$.}
+	\label{fig:eocs_L2}
+\end{figure}
+
+The convergence orders for this new right hand side, as shown in Figure \ref{fig:eocs_L2} fit very well to the predictions in every norm.
+
+\microtypesetup{protrusion=false}
+\listoffigures{}
+
 
 \printbibliography{}
 \end{document}
-
-
-
