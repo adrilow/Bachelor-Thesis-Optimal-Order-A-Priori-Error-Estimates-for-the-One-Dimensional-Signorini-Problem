@@ -179,28 +179,29 @@ Munich,\hspace{80mm} Adrián Löwenberg Casas
 \end{center}
 
 \vspace{10mm}
-% Seitennummerierung römisch
-\pagenumbering{roman}
+
 % Kopfzeilen (automatisch erzeugt)
 \pagestyle{headings}
 Firstly, I would like to thank my advisor Dr. Constantin Christof for his valuable and patient help and comments, especially during the difficult circumstances of the Covid-19 pandemic.
 
-A warm thank you goes to my mentor and dear friend Jonas Graw for pushing my to pursue mathematics, as well as to my friend Jonas P.-Hennig, for actually making it possible.
+A warm thank you goes to my mentor and dear friend Jonas Graw for pushing me to pursue mathematics, as well as to my friend Jonas P.-Hennig, for actually making it possible.
 \newpage
 
 % Seite 3
+% Seitennummerierung römisch
+\pagenumbering{roman}
 \addcontentsline{toc}{chapter}{Abstract}
 \chapter*{}
 \vspace*{-2.2cm}
 \section*{Zusammenfassung auf Deutsch}
 \begin{otherlanguage}{german}
-	In dieser Arbeit werden wir das eindimensionale Signorini-Problem behandeln. Nach der Formulierung des Problems werden wir ausführlich seine schwache Formulierung herleiten in Form einer Variationsungleichung sowie eines konvexen Minimierungsproblem in einem Hilbertraum, einer der eindimensionalen Sobolev-Räumen, die wir auf zwei Arten einführen werden. Diese Formulierung wird ein Beweis der Existenz und Eindeutigkeit einer Lösung erlauben.
+	In dieser Arbeit wird das eindimensionale Signorini-Problem behandelt. Nach der Formulierung des Problems wird ausführlich seine schwache Formulierung hergeleitet in Form einer Variationsungleichung sowie eines konvexen Minimierungsproblems in einem Hilbertraum, einer der Sobolev-Räume der Dimension Eins, die auf zwei Arten eingeführt werden. Diese Formulierung wird einen Beweis der Existenz und Eindeutigkeit einer Lösung erlauben.
 	
-	Wir werden die Finite-Elemente-Methode zur numerischen Approximation von Lösungen zum Problem betrachten. Diese Methode erlaubt eine sehr ähnliche Formulierung des Problems, obgleich in einem endlichdimensionalen Raum. Danach werden wir die Fundiertheit dieser Konstruktion analysieren durch Herleitung von a-priori Konvergenzordnungen optimaler Ordnung für den Fehler der Approximationen in verschiedenen Normen, welche wir zum Schluss mit zwei empirischen Beispiele mittels einer MATLAB Implementierung der Methode testen werden.
+	Die Finite-Elemente-Methode wird zur numerischen Approximation von Lösungen zum Problem betrachtet. Diese Methode erlaubt eine sehr ähnliche Formulierung des Problems, obgleich in einem endlichdimensionalen Raum. Danach wird die Fundiertheit dieser Konstruktion analysiert durch Herleitung von a priori Konvergenzordnungen optimaler Ordnung für den Fehler der Approximationen in verschiedenen Normen, welche zum Schluss mit zwei empirischen Beispielen mittels einer MATLAB Implementierung der Methode getestet werden.
 \end{otherlanguage}
 
 \section*{Abstract in English}
-In this paper we will handle the one-dimensional Signorini problem. After formulating the problem, we will thoroughly derive its weak formulation as a variational inequality and as a convex minimization problem in a Hilbert Space, one of the one-dimensional Sobolev spaces, which we will introduce in two ways. This formulation will allow for the proof of existence and uniqueness of a solution. 
+In this paper we will handle the one-dimensional Signorini problem. After formulating the problem, we will thoroughly derive its weak formulation as a variational inequality and as a convex minimization problem in a Hilbert Space, one of the Sobolev spaces in dimension one, which we will introduce in two ways. This formulation will allow for the proof of existence and uniqueness of a solution. 
 
 We will consider the finite element method to approximate solutions to the problem numerically. This method allows for a very similar formulation of the problem, albeit in a finite dimensional space. Then, we will analyze the soundness of this construction by deriving optimal-order a-priori convergence orders for the error of the approximations in several norms which we will lastly test with two empirical examples with a MATLAB implementation of the method.
 
@@ -211,6 +212,7 @@ We will consider the finite element method to approximate solutions to the probl
 \microtypesetup{protrusion=false}
 \tableofcontents{}
 \microtypesetup{protrusion=true} 
+\clearpage
 
 
 \pagenumbering{arabic}  % Nummerierung der Seiten in 'arabisch' % neues Kapitel mit Namen "Introduction"
@@ -285,12 +287,12 @@ The problem we will analyze here is a simpler, one dimensional version of the pr
 The classical formulation \eqref{eq:signorini} of the Signorini problem has an intuitive physical meaning, but it is not suitable for the mathematical analysis of the existence of a solution. We will work towards the so-called weak formulation of the problem, which will allow for the usage of general functional analysis techniques, as well as some from the calculus of variations. To that end, we will firstly define the Sobolev Banach and Hilbert Spaces.
 
 \section{Sobolev Spaces}
-\begin{definition}One Dimensional Sobolev-Spaces \newline
-	Let $p\in [1,\infty]$. For $k \in \mathbb{N}_0$, the Sobolev-Space $W^{k,p}(a,b)$ is defined as follows:
+\begin{definition}Sobolev Spaces in Dimension One\newline
+	Let $p\in [1,\infty]$, and $a,b \in \mathbb{R}$, $a<b$. For $k \in \mathbb{N}_0$, the Sobolev-Space $W^{k,p}(a,b)$ is defined as follows:
 	\begin{align}
 	\begin{split}
 	W^{0,p}(a,b) &\coloneqq L^p(a,b) \\
-	W^{k,p}(a,b) &\coloneqq \big\{ v \in W^{k-1,p}(a,b) \,|\, \exists w \in W^{k-1,p}(a,b), c\in\mathbb{R}. \\
+	W^{k,p}(a,b) &\coloneqq \big\{ v \in W^{k-1,p}(a,b) \,|\, \exists w \in W^{k-1,p}(a,b), c\in\mathbb{R}: \\
 	& \phantom{\coloneqq \big\{\,\,} v(t) =  c + \int_a^t w(\tau) \dif \tau \quad \text{f.a.a.} \,\, t\in (a,b)  \big\}
 	\end{split}
 	\end{align}
@@ -301,6 +303,7 @@ The classical formulation \eqref{eq:signorini} of the Signorini problem has an i
 	\norm{v}_{W^{k,p}(a,b)} \coloneqq \left(\sum\limits_{i = 0}^k \norm{v^{(i)}}_{L^p(a,b)}^p\right)^{1/p} \label{eq:sobolev1_norm}
 	\end{equation}
 	In the case of $p=2$ the notation $H^k(a,b) \coloneqq W^{k,2}(a,b)$ is used. This space is a Hilbert Space with the following inner product:
+	
 	\begin{equation}
 	(v,z)_{H^k(a,b)} \coloneqq \sum_{i=0}^{k} (v^{(k)}, z^{(k)})_{L^2([a,b])} = \sum_{i=0}^{k} \int_a^b v^{(k)}(\tau)z^{(k)}(\tau) \dif \tau \label{eq:sobolev1_inner_product}
 	\end{equation}
