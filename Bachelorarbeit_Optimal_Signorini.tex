@@ -101,6 +101,7 @@ uniquename=init]{biblatex} % TODO: adapt citation style
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\esssup}{ess\,sup}
 
 % Define TUM corporate design colors
 % Taken from http://portal.mytum.de/corporatedesign/index_print/vorlagen/index_farben
@@ -130,30 +131,60 @@ uniquename=init]{biblatex} % TODO: adapt citation style
 
 % Titelseite
 \pagestyle{empty}       % keine Seitennummer
-  \parbox{1.5cm}{\resizebox*{110pt}{!}{\includegraphics{tum.pdf}}}\hspace{310pt}%
-  \parbox{1.5cm}{\resizebox*{90pt}{!}{\includegraphics{FAK_MA_CMYK.pdf}}}%
+\parbox{1.5cm}{\resizebox*{110pt}{!}{\includegraphics{tum.pdf}}}\hspace{310pt}%
+\parbox{1.5cm}{\resizebox*{90pt}{!}{\includegraphics{FAK_MA_CMYK.pdf}}}%
 \vspace*{1.5cm}
 \begin{center}
-{\huge \MakeUppercase{Department of Mathematics}} 
-\\
-\vspace*{5mm}
-{\large \MakeUppercase{Technische Universität München} }
-\\
-\vspace*{2cm}
-{\huge {\textbf{{Optimal-Order A-Priori Error Estimates} \\ for the
-One-Dimensional\\ Signorini Problem}\par}}
-\vspace*{2cm}
-{\Large Bachelor's Thesis}\linebreak \\ 
-{\Large by}\linebreak \\
-{\Large Adrián Löwenberg Casas}\\
-\vspace*{1.8cm}
-{\large 
-\begin{tabular}{ll}
-Supervisor: & Prof. Dr. Boris Vexler\\
-Advisor: & Dr. Constantin Christof\\
-Submission Date: & 15th September 2020
-\end{tabular}
-}
+	{\huge \MakeUppercase{Department of Mathematics}} 
+	\\
+	\vspace*{5mm}
+	{\large \MakeUppercase{Technische Universität München} }
+	\\
+	\vspace*{2cm}
+	{\huge {\textbf{{Optimal-Order A-Priori Error Estimates} \\ for the
+				One-Dimensional\\ Signorini Problem}\par}}
+	\vspace*{2cm}
+	{\Large Bachelor's Thesis}\linebreak \\ 
+	{\Large by}\linebreak \\
+	{\Large Adrián Löwenberg Casas}\\
+	\vspace*{1.8cm}
+	{\large 
+		\begin{tabular}{ll}
+			Supervisor: & Prof. Dr. Boris Vexler\\
+			Advisor: & Dr. Constantin Christof\\
+			Submission Date: & 15th September 2020
+		\end{tabular}
+	}
+\end{center}
+\newpage    % Seitenwechsel
+
+% Titelseite
+\pagestyle{empty}       % keine Seitennummer
+\parbox{1.5cm}{\resizebox*{110pt}{!}{\includegraphics{tum.pdf}}}\hspace{310pt}%
+\parbox{1.5cm}{\resizebox*{90pt}{!}{\includegraphics{FAK_MA_CMYK.pdf}}}%
+\vspace*{1.5cm}
+\begin{center}
+	{\huge \MakeUppercase{Department of Mathematics}} 
+	\\
+	\vspace*{5mm}
+	{\large \MakeUppercase{Technische Universität München} }
+	\\
+	\vspace*{1cm}
+	{\huge {\textbf{{Optimal-Order A-Priori Error Estimates} \\ for the
+				One-Dimensional\\ Signorini Problem}\par}}
+	{\huge {\textbf{ \textls*[-9]{A priori Fehlerabschätzungen optimaler} Ordnung für das eindimensionale Signorini-Problem}\par}}
+	\vspace*{1cm}
+	{\Large Bachelor's Thesis}\linebreak \\ 
+	{\Large by}\linebreak \\
+	{\Large Adrián Löwenberg Casas}\\
+	\vspace*{0.8cm}
+	{\large 
+		\begin{tabular}{ll}
+			Supervisor: & Prof. Dr. Boris Vexler\\
+			Advisor: & Dr. Constantin Christof\\
+			Submission Date: & 15th September 2020
+		\end{tabular}
+	}
 \end{center}
 \newpage    % Seitenwechsel
 
@@ -300,12 +331,15 @@ The classical formulation \eqref{eq:signorini} of the Signorini problem has an i
 	
 	$W^{k,p}(a,b)$ is a Banach Space with the following norm:
 	\begin{equation}
-	\norm{v}_{W^{k,p}(a,b)} \coloneqq \left(\sum\limits_{i = 0}^k \norm{v^{(i)}}_{L^p(a,b)}^p\right)^{1/p} \label{eq:sobolev1_norm}
+	\norm{v}_{W^{k,p}(a,b)} \coloneqq \begin{cases}
+	\left(\sum\limits_{i = 0}^k \norm{v^{(i)}}_{L^p(a,b)}^p\right)^{1/p} = \left(\sum\limits_{i = 0}^k \int\limits_{a}^{b}{\abs{v^{(i)}(\tau)}^p \dif \tau}\right)^{1/p} &\text{if}\quad 1\leq p<\infty \\
+	\max\limits_{i = 0,\dots,k} \norm{v^{(i)}}_{L^\infty(a,b)} = \max\limits_{i = 0,\dots,k} \left(\esssup\limits_\tau \abs{v^{(i)}(\tau)}\right) &\text{if}\quad p = \infty
+	\end{cases} \label{eq:sobolev1_norm}
 	\end{equation}
 	In the case of $p=2$ the notation $H^k(a,b) \coloneqq W^{k,2}(a,b)$ is used. This space is a Hilbert Space with the following inner product:
 	
 	\begin{equation}
-	(v,z)_{H^k(a,b)} \coloneqq \sum_{i=0}^{k} (v^{(k)}, z^{(k)})_{L^2([a,b])} = \sum_{i=0}^{k} \int_a^b v^{(k)}(\tau)z^{(k)}(\tau) \dif \tau \label{eq:sobolev1_inner_product}
+	(v,z)_{H^k(a,b)} \coloneqq \sum_{i=0}^{k} (v^{(i)}, z^{(i)})_{L^2(a,b)} = \sum_{i=0}^{k} \int_a^b v^{(i)}(\tau)z^{(i)}(\tau) \dif \tau \label{eq:sobolev1_inner_product}
 	\end{equation}
 	These results can be found in the literature, for example in Mitrović and Žubrinić \cite[Chapter 5, Section 2, Remark 2]{mitrovic1997fundamentals}.
 \end{definition}
@@ -313,32 +347,32 @@ The classical formulation \eqref{eq:signorini} of the Signorini problem has an i
 This definition of the Sobolev Spaces, although the most simple, is not the one most commonly found in the literature. The usual way to define a weak derivative, and therefore the Sobolev Spaces is through testing with infinitely differentiable functions with compact support. This alternative definition will be useful down the line, as it is very analogous to the variational inequalities we will be considering:
 
 \begin{lemma} Equivalent Characterization of the Sobolev Spaces \newline
-	Let $C_c^\infty([a,b])$ be the space of the infinitely differentiable functions with compact support inside $(a,b)$. Note that this implies that these functions disappear on the boundary. Let $k \in \mathbb{N}_0$. Let $v$ be a locally integrable function. A locally integrable function $w$, which fulfills:
+	Let $C_c^\infty(a,b)$ be the space of the infinitely differentiable functions with compact support inside $(a,b)$. Note that this implies that these functions disappear on the boundary. Let $k \in \mathbb{N}_0$. Let $v$ be a locally integrable function. A locally integrable function $w$, which fulfills:
 	\begin{equation} \label{eq:weak_derivative_through_testing}
-	\int_a^b u \varphi^{(k)} \dif x = \int_a^b w \varphi \dif x \quad \forall \varphi \in C_c^\infty([a,b])
+	\int_a^b v \varphi^{(k)} \dif x = (-1)^k \int_a^b w \varphi \dif x \quad \forall \varphi \in C_c^\infty(a,b)
 	\end{equation}
 	or, equivalently:
 	\begin{equation}
-		(u,\varphi^{(k)})_{L^2([a,b])} = (w,\varphi)_{L^2([a,b])} \quad \forall \varphi \in C_c^\infty([a,b])
+		(v,\varphi^{(k)})_{L^2(a,b)} = (-1)^k (w,\varphi)_{L^2(a,b)} \quad \forall \varphi \in C_c^\infty(a,b)
 	\end{equation}
 	is the $k$th weak derivative of $v$, i.e. $v^{(k)} = w$. With this definition one can also see through partial integration that in the case that a classical derivative exists, it is also the weak derivative.
 	
-	 furthermore $p\in [1,\infty]$. For $k \in \mathbb{N}_0$ and $p \in \mathbb{N}$, the Sobolev Space $W^{k,p}(a,b)$ is the space of all $L^p([a,b])$-functions whose $i$th partial derivative, defined in the above sense, has a finite $L^p$-norm, for all $i \in \{0,\dots,k\}$. 
+	 For $k \in \mathbb{N}_0$ and $p\in [1,\infty]$, the Sobolev Space $W^{k,p}(a,b)$ is the space of all $L^p(a,b)$-functions whose $i$th partial derivative, defined in the above sense, exists and has a finite $L^p$-norm, for all $i \in \{0,\dots,k\}$. 
 	
 	
 	Again, this definition can be found in the literature, for example in Kurdilla and Zabarankin \cite[Definition 3.2.3]{kurdila2005convex}.
 \end{lemma}
 
-The Sobolev Spaces are subspaces of the $L^p$-spaces, therefore their elements are equivalence classes of Lebesgue-almost everywhere equal functions. In order to formulate the Signorini Problem weakly, we however need to enforce the boundary conditions, which are defined on the two points of $\partial \Omega$. We will show that in the case of $H^k([a,b])$, there is always a canonical representative in $C^{k-1}([a,b])$.
+The Sobolev Spaces are subspaces of the $L^p$-spaces, therefore their elements are equivalence classes of Lebesgue-almost everywhere equal functions. In order to formulate the Signorini Problem weakly, we however need to enforce the boundary conditions, which are defined on the two points of $\partial \Omega$. We will show that in the case of $H^k(a,b)$, there is always a canonical representative in $C^{k-1}(a,b)$.
 
 
-\begin{lemma}\thlabel{thm:sobolev_embedding_1} Sobolev Embedding for $H^1([a,b])$ \newline
-	For every $u \in H^1([a,b])$ there exists a $v \in C^{0,\frac{1}{2}}([a,b])$, where $C^{0,\frac{1}{2}}$ is a Hölder-Space with Hölder-continuity constant $\frac{1}{2}$, such that $u = [v \vert_{(a,b)}]$. As an embedding, this can be written as:
+\begin{lemma}\thlabel{thm:sobolev_embedding_1} Sobolev Embedding for $H^1(a,b)$ \newline
+	For every $u \in H^1(a,b)$ there exists a $v \in C^{0,\frac{1}{2}}(a,b)$, where $C^{0,\frac{1}{2}}$ is a Hölder-Space with Hölder-continuity constant $\sfrac{1}{2}$, such that $u = [v \vert_{(a,b)}]$. As an embedding, this can be written as:
 	\begin{equation} \label{eq:sobolev1_embedding}
-	H^1([a,b]) \hookrightarrow C^{0,\frac{1}{2}}([a,b])
+	H^1(a,b) \hookrightarrow C^{0,\frac{1}{2}}(a,b)
 	\end{equation}
 	\begin{proof}
-	Let $u \in H^1([a,b])$, $a \leq x_1 < x_2 \leq b$, and let $u = [v]$ such that $v(x) = v_0 + \int_a^x w(\tau) \dif \tau$. We will show that $v$ is $\frac{1}{2}$-Hölder-continuous:
+	Let $u \in H^1(a,b)$, $a \leq x_1 < x_2 \leq b$, and let $u = [v]$ such that $v(x) = v_0 + \int_a^x w(\tau) \dif \tau$. We will show that $v$ is $\frac{1}{2}$-Hölder-continuous:
 	\begin{align*}
 	\vert v(x_1) - v(x_2) \vert &= \left\vert \int_{a}^{x_1} w(\tau) \dif \tau - \int_{a}^{x_2} w(\tau) \dif \tau \right\vert \\
 	&= \left\vert \int_{x_1}^{x_2} w(\tau) \dif \tau \right\vert \overset{\textnormal{Hölder}}{\leq} \Vert w \Vert_{L^2} \left\vert \int_{x_1}^{x_2} 1 \dif \tau \right\vert ^{\frac{1}{2}} \\
@@ -348,9 +382,9 @@ The Sobolev Spaces are subspaces of the $L^p$-spaces, therefore their elements a
 \end{lemma}
 
 \begin{corollary} Sobolev Embedding for $H^k(a,b)$ \newline
-		For every $u \in H^k(a,b)$ there exists a $v \in C^{k-1}([a,b])$, such that $u = [v \vert_{(a,b)}]$. As an embedding, this can be written as:
+		For every $u \in H^k(a,b)$ there exists a $v \in C^{k-1}(a,b)$, such that $u = [v \vert_{(a,b)}]$. As an embedding, this can be written as:
 	\begin{equation}
-	H^k(a,b) \hookrightarrow C^{k-1}([a,b])
+	H^k(a,b) \hookrightarrow C^{k-1}(a,b)
 	\end{equation}
 	\begin{proof}
 		This follows directly from \thref{thm:sobolev_embedding_1} and the Fundamental Theorem of Calculus.
@@ -362,7 +396,7 @@ Using these statements, we will henceforth identify elements of $H^k$ with their
 
 \section{Weak Formulation}
 
-\begin{theorem} Weak Formulation of the Signorini Problem\newline
+\begin{theorem} Weak Formulation of the Signorini Problem I\newline
 	Let $K \coloneqq \left\{ v\in H^1(\Omega) \,|\, v(-1) \geq 0, v(1) \geq 0 \right\}$. Then a solution $u \in K$ of the following variational inequality is a weak solution of \eqref{eq:signorini}:
 	\begin{equation}
 	\int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K \label{eq:variational_inequality}
@@ -372,7 +406,7 @@ Using these statements, we will henceforth identify elements of $H^k$ with their
 	(u,v-u)_{H^1(\Omega)} \geq (f,v-u)_{L^2(\Omega)} \quad \forall v \in K
 	\end{equation}
 	\begin{proof}
-	Consider the differential form of the Signorini Problem \eqref{eq:signorini} \eqref{eq:boundary_signorini} and suppose $u \in C([-1,1])$ solves it classically. Furthermore let $v \in K$. Multiplying \eqref{eq:signorini} by the test function $v-u$ and integrating over the domain $\Omega$ yields:
+	Consider the differential form of the Signorini Problem \eqref{eq:signorini} \eqref{eq:boundary_signorini} and suppose $u \in C^2(\Omega)$ solves it classically. Furthermore let $v \in K$. Multiplying \eqref{eq:signorini} by the test function $v-u$ and integrating over the domain $\Omega$ yields:
 	\begin{align*}
 	&\int_{-1}^1 {(-u'' + u - f)(v - u)\dif x} = 0  \\
 	\Longleftrightarrow &\int_{-1}^1 -u''(v-u) \dif x + \int_{-1}^1 u(v-u) - f (v-u) \dif x =0
@@ -434,7 +468,7 @@ Note that, in particular, $K$ fulfills the generalized boundary conditions, and 
 
 \begin{theorem} Equivalent formulation as a convex minimization problem\newline
 	$u \in H^1(\Omega)$ solves the following minimization problem if and only if it solves a variational inequality of the form \eqref{eq:variational_inequality}, but with a test set $K^0$:
-	\begin{equation} \label{eq:minimization_problem}
+	\begin{equation} \label{eq:minimization_problem_lemma}
 	\min_{v \in K^0} F(v)
 	\end{equation}
 	The functional $F$ can be understood as the energy functional. This is a convex problem.
@@ -442,7 +476,7 @@ Note that, in particular, $K$ fulfills the generalized boundary conditions, and 
 	We start with the slight modification of the variational inequality \eqref{eq:variational_inequality}:
 	\begin{align*}
 		&\int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K^0 \\
-		\Longleftrightarrow & \int_{-1}^1 u'v' - (u')^2 + uv - u^2 - fv - fu \dif x \geq 0 \quad \forall v \in K^0 \\
+		\Longleftrightarrow & \int_{-1}^1 u'v' - (u')^2 + uv - u^2 - fv + fu \dif x \geq 0 \quad \forall v \in K^0 \\
 	\end{align*}
 	We will now use the Young inequality to bound the integral from above:
 	\begin{equation}
@@ -450,7 +484,7 @@ Note that, in particular, $K$ fulfills the generalized boundary conditions, and 
 	\end{equation}
 	This follows directly from the binomial formula. Using it on the variational inequality yields the following:
 	\begin{align*}
-	&\int_{-1}^1 \frac{1}{2} (u')^2 + \frac{1}{2} (v')^2 - (u')^2 + \frac{1}{2} u^2 + \frac{1}{2} v^2 - u^2 - fv - fu \dif x \geq 0 \quad \forall v \in K^0 \\
+	&\int_{-1}^1 \frac{1}{2} (u')^2 + \frac{1}{2} (v')^2 - (u')^2 + \frac{1}{2} u^2 + \frac{1}{2} v^2 - u^2 - fv + fu \dif x \geq 0 \quad \forall v \in K^0 \\
 	\Longleftrightarrow & \int_{-1}^1 \frac{1}{2} (v')^2 + \frac{1}{2} v^2 - fv \dif x \geq \int_{-1}^1 \frac{1}{2} (u')^2 + \frac{1}{2} u^2 - fu \dif x \quad \forall v \in K^0
 	\end{align*}
 	Or, equivalently:
@@ -479,13 +513,23 @@ Note that, in particular, $K$ fulfills the generalized boundary conditions, and 
 	\end{proof}
 \end{theorem}
 
+\begin{corollary} Weak Formulation of the Signorini Problem II\newline
+	A solution $u \in K$ of the following variational inequality is a weak solution of \eqref{eq:signorini}:
+	\begin{equation} \label{eq:minimization_problem}
+	\min_{\substack{v \in H^1(\Omega) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v) = \min_{\substack{v \in H^1(\Omega) \\ v(-1) \geq 0,\, v(1) \geq 0}} \int_{-1}^1{\frac{1}{2} (v')^2 + \frac{1}{2} v^2 - fv \dif x} 
+	\end{equation}
+	\begin{proof}
+	This follows directly from \eqref{eq:minimization_problem_lemma}, since the boundary conditions fulfill the generalized boundary conditions \eqref{eq:generalized_boundary_condition_set}.
+	\end{proof}
+\end{corollary}
+
 \section{Existence and Properties of the Solution}
 \begin{theorem}\thlabel{thm:unique_solution_signorini} Existence of a unique solution to the Signorini Problem \newline
 	A minimization problem of the form \eqref{eq:minimization_problem}, such as the weak formulation of the Signorini Problem, has a unique solution $u \in H^1(\Omega)$
 	\begin{proof}
 		We will prove this using the Direct Method in the Calculus of Variations. In a first step, we will show that the functional $F$ is bounded from below. To this avail define $\{v_n\}_{n\in \mathbb{N}} \subset H^1(\Omega)$ such that: 
 		\begin{equation*}
-		v_n(\pm 1) \geq 0\textnormal{,} \quad \lim\limits_{n \rightarrow \infty} F(v_n) = \inf_{v ?in K^0} F(v)
+		v_n\in K^0\textnormal{,} \quad \lim\limits_{n \rightarrow \infty} F(v_n) = \inf_{v \in K^0} F(v)
 		\end{equation*} 
 		Then there exists a constant $C$ such that:
 		\begin{align*}
@@ -503,20 +547,20 @@ Note that, in particular, $K$ fulfills the generalized boundary conditions, and 
 		\inf_{v \in K^0} F(v) =  \liminf\limits_{n\rightarrow\infty} F(\tilde{v}_n) \geq F(u)
 		\end{equation*}
 		
-		The uniqueness of the solution follows from the strict convexity of the functional \cite{aubin79}.
+		The uniqueness of the solution follows from the strict convexity of the functional \cite{aubin79}. Furthermore, the weak limit $u$ is in $K^0$, since $K^0$ is closed and convex, therefore weakly closed.
 	\end{proof}
 \end{theorem}
 
-Now we will see that without any further assumptions, the weak solution to the Signorini Problem is actually in $H^2$ and its norm is bound by the right hand side $f$.
+Now we will see that without any further assumptions, the weak solution to the Signorini Problem is actually in $H^2$ and its norm is bounded by the right hand side $f$.
 
-\begin{theorem} $H^2$-regularity of the solution to the Signorini Problem \newline
-	Let $u \in H^1(\Omega)$ be the solution to \eqref{eq:minimization_problem}. Then the following holds for $C \in \mathbb{R}_{>0}$:
+\begin{theorem} $H^2$-regularity of the Solution to the Signorini Problem \newline
+	Let $u \in H^1(\Omega)$ be the solution to \eqref{eq:minimization_problem}. Then the following holds for $C \in \mathbb{R}_{>0}:$
 	\begin{align}
 		u &\in H^2(\Omega) \label{eq:H2_regularity} \\
 		\norm{u}_{H^2(\Omega)} &\leq C\norm{f}_{L^2(\Omega)} \label{eq:H2_norm_bound_by_f} 
 	\end{align}
 	\begin{proof}
-		$u \in H^1(\Omega)$ be the solution to \eqref{eq:minimization_problem}. Then it is also the solution of \eqref{eq:variational_inequality} and therefore fulfills the following:
+		Let $u \in H^1(\Omega)$ be the solution to \eqref{eq:minimization_problem}. Then it is also the solution of \eqref{eq:variational_inequality} and therefore fulfills the following:
 		\begin{equation*}
 		(u,v-u)_{H^1(\Omega)} \geq (f,v-u)_{L^2(\Omega)} \quad \forall v \in K
 		\end{equation*}
@@ -531,9 +575,9 @@ Now we will see that without any further assumptions, the weak solution to the S
 		\end{align*}
 		Which means that $u' \in H^1(\Omega)$, with $(u')' = f-z$, implying $u \in H^2(\Omega)$.
 		
-		Using $u'' = f-z$, the characterizing equation of the weak derivative and \eqref{eq:H1_bound_by_f} we obtain:
+		Using $u'' = f-u$, the characterizing equation of the weak derivative and \eqref{eq:H1_bound_by_f} we obtain:
 		\begin{align*}
-			\norm{u}_{H^2(\Omega)}\overset{\eqref{eq:sobolev1_norm}}{=} \norm{u}_{H^1(\Omega)} + \norm{u''}_{L^2(\Omega)} 
+			\norm{u}_{H^2(\Omega)}\overset{\eqref{eq:sobolev1_norm}}{\leq} \norm{u}_{H^1(\Omega)} + \norm{u''}_{L^2(\Omega)} 
 			\overset{\substack{\text{Cauchy} \\ \text{Schwarz}}}{\leq} 2\norm{u}_{H^1(\Omega)} + \norm{f}_{L^2(\Omega)} 
 			\overset{\eqref{eq:H1_bound_by_f}}{\leq} C \norm{f}_{L^2(\Omega)}
 		\end{align*}
@@ -569,7 +613,7 @@ V_h = \mathrm{span}\,\Phi_h &= \mathrm{span}\{\varphi_i^h \,|\, i \in \{0,\dots,
 	\end{equation}
 	Or, equivalently, as a variational inequality:
 	\begin{equation}\label{eq:discrete_variational_inequality}
-	u_h \in V_h,\quad (u_h, v_h-u_h)_{H^1(\Omega)} \geq (f, v_h - u_h)_{L^2(\Omega)} \quad \forall v_h \in V_h \cap K
+	u_h \in V_h \cap K,\quad (u_h, v_h-u_h)_{H^1(\Omega)} \geq (f, v_h - u_h)_{L^2(\Omega)} \quad \forall v_h \in V_h \cap K
 	\end{equation}
 	
 \end{definition}
@@ -579,13 +623,13 @@ We could use the same techniques from the previous section to show that this pro
 \begin{lemma} Matrix Formulation of the Discrete Problem \newline
 	Using the basis \eqref{eq:basis_finite_element_space}, we represent the solution function $v_h$ as a linear combination of the basis functions and define $\mathbf{v}$ as the corresponding coefficient vector:
 	\begin{equation} \label{eq:basis_representation_v_h}
-	v_h(x) = \sum_{i=1}^{N} \mathbf{v}_i \varphi_i^h(x)
+	v_h(x) = \sum_{i=0}^{N} \mathbf{v}_i \varphi_i^h(x)
 	\end{equation}
 		The above problem \eqref{eq:discrete_minimization} is then equivalent to:
 		\begin{equation} \label{eq:matrix_formulation}
-		\min_{\substack{\mathbf{v} \in \mathbb{R}^{(N+1)\times(N+1)}\\ \mathbf{v}_{0} \geq 0,\, \mathbf{v}_N \geq 0}} \frac{1}{2} \mathbf{v}^T (B_1 + B_2) \mathbf{v} - \mathbf{f}^T  \mathbf{v}
+		\min_{\substack{\mathbf{v} \in \mathbb{R}^{(N+1)}\\ \mathbf{v}_{0} \geq 0,\, \mathbf{v}_N \geq 0}} \frac{1}{2} \mathbf{v}^T (B_1 + B_2) \mathbf{v} - \mathbf{f}^T  \mathbf{v}
 		\end{equation}
-		We call $B_1$ the \emph{mass matrix} and $B_2$ the \emph{stiffness matrix}. $B_1$, $B_2$ and $\mathbf{f} \in \mathbb{R}^{(N+1)\times(N+1)}$ are defined as follows:
+		We call $B_1$ the \emph{mass matrix} and $B_2$ the \emph{stiffness matrix}. $B_1$, $B_2$ and $\mathbf{f} \in \mathbb{R}^{(N+1)}$ are defined as follows:
 		\begin{align*}
 		B_1 &\coloneqq 			h	\begin{pmatrix}
 		1/3& 1/6 & & & & & \\
@@ -610,11 +654,11 @@ We could use the same techniques from the previous section to show that this pro
 		\end{align*}
 		Note that only $\mathbf{f}$ changes with the choice of $f$, the stiffness and mass matrices are therefore structural to the problem. In practice, as portrayed in the implementation section, the vector $\mathbf{f}$ can only be approximated numerically with a quadrature of high enough order.
 		\begin{proof}
-			We will analyze \eqref{eq:discrete_minimization} in three parts. For the mass and stiffness matrices we will decompose the integration interval into the intervals $[t_{i-1},t_i]$, so that we can consider only the two basis functions corresponding to the left and right node of the interval:
+			We will analyze \eqref{eq:discrete_minimization} in three parts. For the mass and stiffness matrices we will decompose the integration interval into the intervals $[x_{i-1},x_i]$, so that we can consider only the two basis functions corresponding to the left and right node of the interval:
 			\begin{align*}
-				\int_{-1}^1 v_h^2 \dif x &= \sum_{i=1}^{N} \int_{t_{i-1}}^{t_i} (\mathbf{v}_i \varphi_i + \mathbf{v}_{i-1} \varphi_{i-1})^2 \dif x\\
-				&= \sum_{i=1}^{N} \int_{t_{i-1}}^{t_i} \left(\frac{x-x_{i-1}}{h}\mathbf{v}_i + \frac{x_i-x}{h}\mathbf{v}_{i-1}\right)^2 \dif x \\
-				&= \sum_{i=1}^{N} \int_{t_{i-1}}^{t_i} \left(\frac{x-x_{i-1}}{h}\right)^2 \mathbf{v}_i^2 + 2\left(\frac{x-x_{i-1}}{h}\right) \mathbf{v}_i \left(\frac{x_i-x}{h}\right) \mathbf{v}_{i-1} + \left(\frac{x_i-x}{h}\right)^2 \mathbf{v}_{i-1}^2 \dif x \\
+				\int_{-1}^1 v_h^2 \dif x &= \sum_{i=1}^{N} \int_{x_{i-1}}^{x_i} (\mathbf{v}_i \varphi_i + \mathbf{v}_{i-1} \varphi_{i-1})^2 \dif x\\
+				&= \sum_{i=1}^{N} \int_{x_{i-1}}^{x_i} \left(\frac{x-x_{i-1}}{h}\mathbf{v}_i + \frac{x_i-x}{h}\mathbf{v}_{i-1}\right)^2 \dif x \\
+				&= \sum_{i=1}^{N} \int_{x_{i-1}}^{x_i} \left(\frac{x-x_{i-1}}{h}\right)^2 \mathbf{v}_i^2 + 2\left(\frac{x-x_{i-1}}{h}\right) \mathbf{v}_i \left(\frac{x_i-x}{h}\right) \mathbf{v}_{i-1} + \left(\frac{x_i-x}{h}\right)^2 \mathbf{v}_{i-1}^2 \dif x \\
 				&= \sum_{i=1}^{N} \frac{1}{3}h \mathbf{v}_i^2 + 2\frac{1}{6}h\mathbf{v}_i \mathbf{v}_{i-1} + \frac{1}{3} h \mathbf{v}_{i-1}^2 \\
 				&= h \begin{pmatrix}
 					\mathbf{v}_0 \\					
@@ -640,7 +684,7 @@ We could use the same techniques from the previous section to show that this pro
 			\end{align*}
 			We proceed similarly for the stiffness matrix, here differentiating the two basis functions before integrating $v_h$:
 			\begin{align*}
-			\int_{-1}^1 (v_h')^2 \dif x &= \sum_{i=1}^{N} \int_{t_{i-1}}^{t_i} \left(\frac{x_i-x_{i-1}}{h}\right)^2 \dif x \\
+			\int_{-1}^1 (v_h')^2 \dif x &= \sum_{i=1}^{N} \int_{x_{i-1}}^{x_i} \left(\frac{x_i-x_{i-1}}{h}\right)^2 \dif x \\
 			&= \sum_{i=1}^{N} \frac{1}{h} \mathbf{v}_i^2 - 2\frac{1}{h} \mathbf{v}_i\mathbf{v}_{i-1} + \frac{1}{h}\mathbf{v}_{i-1}^2 \\
 			&= \frac{1}{h} 
 			\begin{pmatrix}
@@ -665,6 +709,7 @@ We could use the same techniques from the previous section to show that this pro
 			\mathbf{v}_N 
 			\end{pmatrix} = \mathbf{v}^T B_2 \mathbf{v}
 			\end{align*}
+			\clearpage
 			Finally, we derive the vector $\mathbf{f}$, for which we will use the linearity of $v_h$ in the third part of \eqref{eq:discrete_minimization}:
 			\begin{align*}
 				\int_{-1}^1 fv_h \dif x &= \int_{-1}^1 f \sum_{i=0}^{N} \mathbf{v}_i \varphi_i^h \dif x \\
@@ -703,7 +748,7 @@ In order to analyze the discretization error, it comes naturally to mind to esti
 We will therefore derive an upper bound for the error between the Ritz Projection of the solution $u$ and the discrete solution $v_h$. To that avail, following the lines of \cite{2019christof}, we will firstly formulate the Ritz Projection in a way that links it to the solution of the Signorini Problem:
 
 \begin{lemma} Ritz Projection of a Signorini Solution \newline
-	We define $R_h(u)$ to be the unique solution $\tilde{u}_h$ of the following variational inequality:
+	The Ritz Projection $R_h(u)$ is identical to be the unique solution $\tilde{u}_h$ of the following variational inequality:
 	\begin{equation}\label{eq:ritz_variational}
 	(\tilde{u}_h, v_h-\tilde{u}_h)_{H^1(\Omega)} \geq (f, v_h-\tilde{u}_h)_{L^2(\Omega)} \quad \forall v_h \in \tilde{K}_h
 	\end{equation}
@@ -856,7 +901,7 @@ The $H^1$ error follows directly from the above bound and the interpolation erro
 		\norm{u-u_h}_{H^1(\Omega)} &\leq \norm{u-R_h(u)}_{H^1(\Omega)} + \norm{R_h(u) - u_h}_{H^1(\Omega)} \\
 		\overset{\eqref{eq:supercloseness}}&{\leq} \norm{u-R_h(u)}_{H^1(\Omega)} + C_1 \max \left(\abs{(u-R_h(u))(-1)}, \abs{(u-R_h(u))(1)}\right) \\
 		&\leq \norm{u-R_h(u)}_{H^1(\Omega)} + C_1 \norm{u-R_h(u)}_{L^\infty(\Omega)} \\
-		\overset{\eqref{eq:ritz_minimization} \eqref{eq:linfty_error_lemma}}&{\leq} \norm{I_h(u) - R_h(u)}_{H^1(\Omega)} + C_1 h^{\sfrac{3}{2}} \norm{u}_{H^2(\Omega)} \\
+		\overset{\eqref{eq:ritz_minimization} \eqref{eq:linfty_error_lemma}}&{\leq} \norm{u - I_h(u)}_{H^1(\Omega)} + C_1 h^{\sfrac{3}{2}} \norm{u}_{H^2(\Omega)} \\
 		\overset{\text{\cite[Thm 4.4.20]{brenner2002mathematical}}}&{\leq} C_2 h + C_1 h^{\sfrac{3}{2}}\norm{u}_{H^2(\Omega)} \\
 		\overset{\eqref{eq:H2_norm_bound_by_f}}&{\leq} C h \norm{f}_{L^2(\Omega)}
 		\end{align*}
@@ -869,10 +914,15 @@ The $H^1$ error follows directly from the above bound and the interpolation erro
 The estimation of the $L^2$ error is more involved. We will follow the lines of \cite{2019christof}, which in turn follows \cite[Section 7]{mosco2006}, who proposed this approach for a similar obstacle problem. The key idea is to formulate two so-called dual variational inequalities, one for the positive component $\max(0, u-u_h)$ and one for the negative component $\min(0, u-u_h)$ of the error. From these we will derive useful inequalities.
 
 \begin{definition} The Dual Problems \newline
-	Let $L \coloneqq \left\{ v \in H^1(\Omega) \,|\, v(\pm 1) \geq 0 \,\,\text{if}\,\, u(\pm 1) = 0 \right\}$.Then we define the dual problem as follows:
+	Firstly, define the following sets of functions fulfilling boundary conditions:
+	\begin{align*}
+	L &\coloneqq \left\{ v \in H^1(\Omega) \,|\, v(\pm 1) \geq 0 \,\,\text{if}\,\, u(\pm 1) = 0 \right\} \\
+	\tilde{L} &\coloneqq \left\{ v \in H^1(\Omega) \,|\, v(\pm 1) \geq 0 \,\,\text{if}\,\, u_h(\pm 1) = 0 \right\}
+	\end{align*} 
+	Then we define the dual problems as follows:
 	\begin{align} 
 		z \in L,\quad (z,v-z)_{H^1(\Omega)} \geq (-\max(0,u-u_h),v-z)_{L^2(\Omega)} \quad \forall v \in L \label{eq:dual_variational_inequality} \\
-		z \in L,\quad (z,v-z)_{H^1(\Omega)} \geq (-\min(0,u-u_h),v-z)_{L^2(\Omega)} \quad \forall v \in L
+		z \in \tilde{L},\quad (z,v-z)_{H^1(\Omega)} \geq (-\min(0,u_h-u),v-z)_{L^2(\Omega)} \quad \forall v \in \tilde{L}
 	\end{align}
 \end{definition}
 
@@ -887,11 +937,11 @@ Firstly, we will need some tools to relate a function to its positive and negati
 	\end{split} \\
 	\nonumber \\ 
 	\begin{split} \label{eq:stampacchia_derivative}
-	\left(\max(0,u)\right)' = \max(0,u') &= \begin{cases}
+	\left(\max(0,u)\right)' &= \begin{cases}
 	u' &\text{in}\,\, \{u > 0\}, \\
 	0  &\text{in}\,\, \{u \leq 0\}
 	\end{cases} \\
-	\left(\min(0,u)\right)' = \min(0,u') &= \begin{cases}
+	\left(\min(0,u)\right)' &= \begin{cases}
 	u' &\text{in}\,\, \{u < 0\}, \\
 	0  &\text{in}\,\, \{u \geq 0\}
 	\end{cases}
@@ -938,7 +988,7 @@ We will now consider a solution $z \in H^2(\Omega)$ of \eqref{eq:dual_variationa
 		\norm{\max(0,u-u_h)}_{L^2(\Omega)}^2 &\leq (z,u_h-u)_{H^1(\Omega)} \\
 		(f, I_h(z))_{L^2} &\leq (u, I_h(z))_{H^1(\Omega)} \\
 		(f, -I_h(z))_{L^2} &\leq (u_h, -I_h(z))_{H^1(\Omega)} \\
-		\norm{\max(0,u-u_h)}_{L^2(\Omega)}^2 &\leq (z-I_h(z), u_h - u)_{H^1(\Omega)} \label{eq:scalar_product_ineq_L2}
+		\norm{\max(0,u-u_h)}_{L^2(\Omega)}^2 &\leq (z-I_h(z), u_h - u)_{H^1(\Omega)} \label{eq:scalar_producx_ineq_L2}
 	\end{align}
 	\begin{proof}
 		For the first inequality, we test \eqref{eq:dual_variational_inequality} against $z+u_h-u$. This function is in $L$. This only needs to be proven for the case where there are boundary conditions to be enforced, i.e. $u(1) = 0$ or $u(-1) = 0$. W.l.o.g. let $u(1) = 0$: 
@@ -948,7 +998,7 @@ We will now consider a solution $z \in H^2(\Omega)$ of \eqref{eq:dual_variationa
 		The claim follows:
 		\begin{align*}
 		(z, u_h-u)_{H^1(\Omega)} &\geq (-\max(0,u-u_h), u_h-u)_{L^2(\Omega)} \\
-		&= (\max(0,u_h-u), u-u_h)_{L^2(\Omega)} \\
+		&= (\max(0,u-u_h), u-u_h)_{L^2(\Omega)} \\
 		&= \norm{\max(0,u-u_h)}_{L^2(\Omega)}^2
 		\end{align*}
 		
@@ -971,7 +1021,7 @@ We will now consider a solution $z \in H^2(\Omega)$ of \eqref{eq:dual_variationa
 	\end{equation}
 	\begin{proof}
 		\begin{align*}
-		\norm{\max(0,u-u_h)}_{L^2(\Omega)}^2 \overset{\eqref{eq:scalar_product_ineq_L2}}&{\leq} (z-I_h(z),u_h-u)_{H^1(\Omega)} \\
+		\norm{\max(0,u-u_h)}_{L^2(\Omega)}^2 \overset{\eqref{eq:scalar_producx_ineq_L2}}&{\leq} (z-I_h(z),u_h-u)_{H^1(\Omega)} \\
 		\overset{\begin{subarray}{c} \text{Cauchy-}\\ \text{Schwarz}
 			\end{subarray}}&{\leq} \norm{z-I_h(z)}_{H^1(\Omega)} \norm{u_h - u}_{H^1(\Omega)} \\
 			\overset{\substack{\text{\cite[Thm 4.4.20]{brenner2002mathematical}} \\ \eqref{eq:H1_error}}}&{\leq} C_1h \norm{z}_{H^2(\Omega)} C_2h 
@@ -990,7 +1040,7 @@ We will now consider a solution $z \in H^2(\Omega)$ of \eqref{eq:dual_variationa
 	\begin{proof}
 		This follows from the above \thref{thm:L2_error_lemma}, the analogous result for the negative component, and the following:
 		\begin{align*}
-		\norm{u-u_h}_{L^2(\Omega)} &\leq  \norm{u-u_h}_{L^2(\Omega \cap \{ u-u_h \geq 0\})} + \norm{u-u_h}_{L^2(\Omega \cap \{ u-u_h < 0\})} \\
+		\norm{u-u_h}_{L^2(\Omega)} &\overset{\text{Minkowski}}{\leq}  \norm{u-u_h}_{L^2(\Omega \cap \{ u-u_h \geq 0\})} + \norm{u-u_h}_{L^2(\Omega \cap \{ u-u_h < 0\})} \\
 		&= \norm{\max(0,u-u_h)}_{L^2(\Omega \cap \{ u-u_h \geq 0\})} + \norm{\min(0,u-u_h)}_{L^2(\Omega \cap \{ u-u_h < 0\})} \\
 		&= \norm{\max(0,u-u_h)}_{L^2(\Omega)} + \norm{\min(0,u-u_h)}_{L^2(\Omega)} \\
 		\overset{\eqref{eq:L2_error_lemma}}&{\leq}  Ch^2 
@@ -1119,9 +1169,7 @@ c_1 = - \frac{e^3\cos(1) - e^1\sin(1)}{2(e^4 + 1)}, \quad c_2 = \frac{e^1\cos(1)
 		$\sfrac{1}{2^8}$	&	\num{1.9969}	&	\num{0.9950}	&	\num{2.0000} \\
 		$\sfrac{1}{2^9}$	&	\num{1.9985}	&	\num{0.9975}	&	\num{2.0000} \\
 		$\sfrac{1}{2^{10}}$	&	\num{1.9992}	&	\num{0.9988}	&	\num{2.0001} \\
-		\hline
-		regr. & $1$ & $1$ & $1$ \\
-		\hline										
+		\hline				
 		theo. & $1.5$ & $1$ & $2$
 	\end{tabular}
 	\egroup
@@ -1131,11 +1179,10 @@ c_1 = - \frac{e^3\cos(1) - e^1\sin(1)}{2(e^4 + 1)}, \quad c_2 = \frac{e^1\cos(1)
 
 The table shown in Figure \ref{fig:eocs_sin} shows surprising results. While the convergence orders of the $H^1$-error and the $L^2$-error seem to fit the predictions nicely, the $L^\infty$-error converges too quickly. This apparently contradicts the prediction, that a convergence order of $\sfrac{3}{2}$ is optimal in the general case. 
 
-The answer to this apparent contradiction lies exactly there, this is a special case since the right hand side $f = \sin$ lies also in $L^\infty(\Omega)$, and not only in $L^2(\Omega)$. Using the same argument we used in \eqref{eq:H2_regularity}, we can show that the solution consequently not only lies in $H^2(\Omega)$, but also in $W^{2,\infty}(\Omega)$, and its $H^2$-norm can also be bound by the $L^\infty$-norm of the right hand side. 
-
-Consequently, the same arguments used to show the convergence order of $2$ for a function in $H^2(\Omega)$ w.r.t. the $L^2$-norm can be used to show that convergence order for a function in $W^{2,\infty}(\Omega)$ w.r.t. the $L^\infty$-norm, since we have the stronger bound for the $H^2$-norm of the solution.
+The answer to this apparent contradiction lies exactly there, this is a special case since the right hand side $f = \sin$ lies also in $L^\infty(\Omega)$, and not only in $L^2(\Omega)$. Using the same argument we used in \eqref{eq:H2_regularity}, we can show that the solution consequently not only lies in $H^2(\Omega)$, but also in $W^{2,\infty}(\Omega)$, and its $H^2$-norm can also be bound by the $L^\infty$-norm of the right hand side. It can be shown that such a function can indeed be a priori bound by a convergence order of 2, cf. \cite{brenner2002mathematical}.
 
 We will therefore consider a right hand side $f \notin L^\infty(\Omega)$, or at least a function very close to one to avoid numerical anomalies. We achieve this with $f = \abs{x}^{\sfrac{1}{2} - \epsilon}$ (with $\epsilon = \sfrac{1}{1000}$). The Signorini problem does not have a simple analytical solution with this right hand side, however, so we will, as hinted in the previous section, construct a reference solution with a much finer mesh width $\tilde{h} = \sfrac{1}{2^{12}}$, and approximate the error of the coarser approximations using it.
+\clearpage
 
 \begin{figure}[h!]
 	\centerfloat
@@ -1186,9 +1233,7 @@ We will therefore consider a right hand side $f \notin L^\infty(\Omega)$, or at 
 		$\sfrac{1}{2^8}$	&	\num{1.4415}		&		\num{0.8789}		&		\num{1.8698} \\
 		$\sfrac{1}{2^9}$	&	\num{1.4780}		&		\num{0.9036}		&		\num{1.8976} \\
 		$\sfrac{1}{2^{10}}$	&	\num{1.4696}		&		\num{0.9474}		&		\num{1.9509} \\
-		\hline
-		regr. & $1$ & $1$ & $1$ \\
-		\hline										
+		\hline	
 		theo. & $1.5$ & $1$ & $2$
 	\end{tabular}
 	\egroup
