@@ -1,0 +1,589 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \input{./Ressources/Presentation/Preamble4to3.tex} % Layout 4:3
+\input{./Ressources/Presentation/Preamble16to9.tex} % Layout 16:9
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{./_Config.tex}                    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\Rplus}{\protect\hspace{-.1em}\protect\raisebox{.35ex}{\smaller{\smaller\textbf{+}}}}
+\newcommand{\Cpp}{\mbox{C\Rplus\Rplus}\xspace}
+\newcommand{\CppTw}{\mbox{C\Rplus\Rplus 20}\xspace}
+
+\newcommand{\Datum}{\today}
+
+\renewcommand{\PraesentationFusszeileZusatz}{| A-Priori Error Estimates for the One-Dimensional Signorini Problem}
+
+\title{A-Priori Error Estimates for the 1D Signorini Problem \newline \newline {\Large Colloquium to the Bachelor's Thesis \newline}}
+\author{\PersonTitel{} \PersonVorname{} \PersonNachname}
+\institute[]{\UniversitaetName \\ \FakultaetName \\ \LehrstuhlName {\newline}
+Supervisor: Prof. Dr. Boris Vexler {\newline} Advisor: Dr. Constantin Christof}
+\date[\Datum]{\PersonStadt, October 7, 2020}
+\subject{Optimal-Order A-Priori Error Estimates for the One-Dimensional Signorini Problem}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{./Ressources/Presentation/Beginning.tex} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FOLIENSTIL: Standard
+% !!!ÄNDERUNG HIER:!!!
+\PraesentationMasterStandard
+%\PraesentationMasterKopfzeileDreizeiler
+%\PraesentationMasterWeissBlau
+
+%\PraesentationStartseiteFlaggen
+\PraesentationStartseiteUhrenturm
+\PraesentationTitelseite % Fügt die Startseite ein
+
+\begin{frame}
+	\frametitle{Overview}
+	\vspace{1cm}
+	\begin{minipage}[s]{\textwidth}
+	\tableofcontents
+	\end{minipage}
+\end{frame}
+
+\section{The Signorini Problem}
+\PraesentationMasterWeissBlau
+\begin{frame}[plain, noframenumbering]
+	\centering
+	\vspace{6cm}
+	\huge{\thesection . \secname}
+\end{frame}
+\PraesentationMasterStandard
+
+\subsection{History and Background}
+\begin{frame}
+	\frametitle{History and Background}	
+	\begin{itemize}
+		\item Posed by Antonio Signorini in 1959 in the \textit{Instituto di Alta Matematica}
+		\item Find the elastic equilibrium of an elastic body on a frictionless plane
+		\item The boundary conditions are ``ambiguous'', i.e. either equality or inequality at any point
+		\item Gaetano Fichera solved the problem before Signorini's death, after not finding anything similar in the literature
+	\end{itemize}
+
+\begin{itemize}
+	\item We will analyze a simpler 1D version of the problem
+	\item An elastic beam with a two point contact set on the boundary is subject to an arbitrary force
+	\item In the equilibrium configuration, the beam might touch the boundary or not, hence the different boundary conditions
+\end{itemize}
+\end{frame}
+
+\subsection{The 1D Signorini Problem}
+\begin{frame}
+	\frametitle{The 1D Signorini Problem}
+	\vspace{0.6cm}
+	\begin{definition}
+		Let $\Omega \coloneqq (-1,1)$,
+		
+		the normal derivative of $u$ on $\partial\Omega$ be $\partial_nu$, i.e. $\partial_nu(-1) = -u'(-1)$ and $\partial_nu(1) = u'(1)$, 
+		
+		and $f \in L^2(-1,1)$. The problem is defined as follows:
+		\begin{align}
+			-u'' + u &= f \quad \textnormal{in} \quad \Omega \label{eq:signorini}\\ 
+			\textcolor{TUMBlue}{\partial_n u \geq 0},\quad \textcolor{TUMAccentOrange}{u}\, &\textcolor{TUMAccentOrange}{\geq 0},\textcolor{TUMGray}{\quad u\partial_nu = 0} \quad\textnormal{on}\quad \partial \Omega \label{eq:boundary_signorini}
+		\end{align}
+		The third boundary condition is the ``ambiguous'' one, as either the beam touches the surface $u(\pm1) = 0$, or it has vanishing derivative on the border $\partial_nu(\pm 1) = 0$.
+	\end{definition}
+\end{frame}
+
+\subsection{Visualization}
+\begin{frame}
+	\frametitle{The 1D Signorini Problem}
+	\begin{minipage}{0.5\linewidth}
+		\vspace{0.6cm}
+		Visualization of the problem for a \\right hand side $f = \sin$
+	\end{minipage}
+	\begin{minipage}{0.5\linewidth}
+		\vspace{-3.5cm}
+\hspace{8cm}		\begin{tikzpicture}[scale=4.5]
+	\draw (-1.25,1) -- (-1,1) -- (-1,0.25);
+	\draw (1,0.25) -- (1,1) -- (1.25,1);
+	\pattern[pattern=north west lines, pattern color=black] (-1.25,0.25) rectangle (-1,1)
+	(1,0.25) rectangle (1.25,1);
+	\node[anchor = north] at (-1.125,0.25) {$\vdots$};
+	\node[anchor = north] at (1.125,0.25) {$\vdots$};
+	
+	\draw[thick] plot [smooth] coordinates{(-1,1) (-0.75,0.9451) (-0.5,0.9719) (-0.25,1.0569) (0,1.1764) (0.25,1.3069) (0.5,1.4258) (0.75,1.5116) (1,1.5443)}; 
+	
+	\draw[->] (-1,2) to 	(-1,	1.5793);
+	\draw[->] (-0.75,2) to 	(-0.75,	1.6592);
+	\draw[->] (-0.5,2) to 	(-0.5,	1.7603);
+	\draw[->] (-0.25,2) to 	(-0.25,	1.8763);
+	%\draw[->] (0,2) to 		(0,2);
+	\draw[->] (0.25,2) to 	(0.25,	2.1237);
+	\draw[->] (0.5,2) to 	(0.5,	2.2397);
+	\draw[->] (0.75,2) to 	(0.75,	2.3408);
+	\draw[->] (1,2) to 		(1,		2.4207);
+	\node at (0,2) {$f$};
+	
+	\node at (0,1.30) {$u$};
+	
+	\node[anchor=south] at (-1,1) {$\scriptstyle \substack{\textcolor{TUMAccentOrange}{u(-1) \geq 0} \\ \textcolor{TUMGray}{u (-1) = 0}}$};
+	\draw[->] (-1,1) to	(-0.75,	0.85);
+	\node[anchor = north] at (-0.75,	0.85) {$\scriptstyle \textcolor{TUMBlue}{\partial_n u(-1) \geq 0}$};
+	
+	\node[anchor=south] at (1,1.5433) {$\scriptstyle \textcolor{TUMAccentOrange}{u (1) \geq 0}$};
+	\draw[->] (1,1.5433) to	(1.25,	1.5433);
+	\node[anchor = west] at (1.25,	1.5433) {$\scriptstyle \substack{\textcolor{TUMBlue}{\partial_n u(1) \geq 0} \\ \textcolor{TUMGray}{\partial_nu (1) = 0}}$};
+	
+	\node[anchor = north] at (0, 0)   {\scriptsize 0};
+	\node[anchor = north] at (1, 0)   {\scriptsize 1};
+	\node[anchor = north] at (-1, 0)   {\scriptsize -1};
+	\node[anchor = east] at (-1.5, 1)   {\scriptsize 0};
+	
+	\draw[<->] (-1, 0) to (1, 0);
+	\draw[<->] (-1.5, 0) to (-1.5, 1);
+\end{tikzpicture}	
+\end{minipage}
+\end{frame}
+
+\section{Solvability}
+\PraesentationMasterWeissBlau
+\begin{frame}[plain, noframenumbering]
+	\centering
+	\vspace{6cm}
+	\huge{\thesection . \secname}
+\end{frame}
+\PraesentationMasterStandard
+\subsection{Sobolev Spaces}
+\begin{frame}
+	\frametitle{Solvability - Sobolev Spaces}
+	\begin{itemize}
+		\item In order to prove the unique solvability of the problem, the above formulation is not adequate
+		\item It is only possible to prove this for the weak formulation
+		\item We introduce the Sobolev Spaces and some of their important properties, such as the Sobolev Embedding:
+	\end{itemize}
+
+\begin{lemma}
+	For every $u \in H^k(a,b)$ there exists a $v \in C^{k-1}(a,b)$, such that $u = [v \vert_{(a,b)}]$, i.e.:
+	\begin{equation}
+		H^k(a,b) \hookrightarrow C^{k-1}(a,b)
+	\end{equation}
+\end{lemma}
+
+\end{frame}
+
+\subsection{Weak Formulation as a Variational Inequality}
+\begin{frame}
+\frametitle{Solvability - Weak Formulation I}
+\begin{itemize}
+	\item Weak formulation means the admissible space of solutions is a superset, and if the solution is in the original set,\\ then it is the classical solution
+	\item It is helpful that the superset is a convex subspace of a Banach Space
+	\item The most direct weak formulation is as a variational inequality, which follows by integrating by parts:
+\end{itemize}
+\begin{theorem} 
+	Let $K \coloneqq \{ v\in H^1(\Omega) \,|\, v(-1) \geq 0, v(1) \geq 0 \}$. A solution to the following solves the Signorini Problem weakly:
+	\begin{equation}
+		u \in K,\quad \int_{-1}^1 u'(v'-u') + u(v-u) - f(v-u) \dif x \geq 0 \quad \forall v \in K \label{eq:variational_inequality}
+	\end{equation}
+	Or, equivalently:
+	\begin{equation}
+		u \in K,\quad (u,v-u)_{H^1(\Omega)} \geq (f,v-u)_{L^2(\Omega)} \quad \forall v \in K
+	\end{equation}
+\end{theorem}
+\end{frame}
+
+\subsection{Weak Formulation as a Minimization Problem}
+\begin{frame}
+	\frametitle{Solvability - Weak Formulation II}
+	\begin{itemize}
+		\item Although we will use similar variational inequalities throughout, it is still not obvious how the solvability can be proved
+		\item For that we will reformulate it as a minimization problem, which is equivalent to the variational inequality:
+	\end{itemize}
+
+\begin{theorem}
+	A solution of the following minimization problem solves the Signorini Problem weakly:
+	\begin{equation}
+		\min_{\substack{v \in H^1(\Omega) \\ v(-1) \geq 0,\, v(1) \geq 0}} F(v) = \min_{\substack{v \in H^1(\Omega) \\ v(-1) \geq 0,\, v(1) \geq 0}} \int_{-1}^1{\frac{1}{2} (v')^2 + \frac{1}{2} v^2 - fv \dif x} 
+	\end{equation}
+\end{theorem}
+
+\begin{itemize}
+	\item The existence of the solution was proved by the Direct Method of the Calculus of Variations, by showing that $F$ is bounded from below, and $K$ is convex
+	\item The uniqueness of the solution follows by the convexness of $F$
+	\item We actually prove this for a \textbf{more general set of boundary conditions}
+\end{itemize}
+\end{frame}
+
+\subsection{$H^2$-regularity of the Solution}
+\begin{frame}
+	\frametitle{$H^2$-regularity of the Solution}
+	\begin{itemize}
+		\item We show the following, without further assumptions:
+	\end{itemize}
+\begin{theorem} 
+	Let $u \in H^1(\Omega)$ be a weak solution to the Signorini Problem. Then the following holds for $C \in \mathbb{R}_{>0}:$
+	\begin{align}
+		u &\in H^2(\Omega) \\
+		\norm{u}_{H^2(\Omega)} &\leq C\norm{f}_{L^2(\Omega)}  
+	\end{align}
+\end{theorem}
+\begin{itemize}
+	\item This result will be crucial for proving each of the error estimates for the discrete solution
+	\item We will realize later in the paper that if $f$ has more regularity, so does $u$
+\end{itemize}
+\end{frame}
+
+\section{Discretization}
+\PraesentationMasterWeissBlau
+\begin{frame}[plain, noframenumbering]
+	\centering
+	\vspace{6cm}
+	\huge{\thesection . \secname}
+\end{frame}
+\PraesentationMasterStandard
+\begin{frame}
+	\frametitle{Discretization}
+	\begin{itemize}
+		\item We will approximate solutions by solving the problem in a finite-dimensional subspace
+		\item This will be the finite element function space $V_h$ with a uniform mesh width $h$, defined as follows:
+	\end{itemize}
+\vspace{0.3cm}
+\begin{definition}
+	\vspace{-0.9cm}
+\begin{align}
+	V_h \coloneqq \{&z \in C([-1,1]) \, | \, \\ 
+	&z \,\, \text{piecewise affine subordinate to a partition}\quad \mathmbox{-1}=x_0<x_1<\dots<x_N = 1 \} \nonumber
+\end{align} 
+\end{definition}
+\vspace{-1cm}
+\begin{itemize}
+	\item With this, we may define the discrete Signorini Problem:
+\end{itemize}
+\vspace{0.3cm}
+\begin{definition} 
+		\vspace{-0.5cm}
+	\begin{equation} \label{eq:discrete_minimization}
+		\min_{\substack{v_h \in V_h \\ v_h(-1) \geq 0,\, v_h(1) \geq 0}} F(v_h) = \min_{\substack{v_h \in V_h \\ v_h(-1) \geq 0,\, v_h(1) \geq 0}} \int_{-1}^1{\frac{1}{2} (v_h')^2 + \frac{1}{2} v_h^2 - fv_h \dif x} 
+	\end{equation}
+	Or, equivalently:
+	\begin{equation}\label{eq:discrete_variational_inequality}
+		u_h \in V_h \cap K,\quad (u_h, v_h-u_h)_{H^1(\Omega)} \geq (f, v_h - u_h)_{L^2(\Omega)} \quad \forall v_h \in V_h \cap K
+	\end{equation}
+	
+\end{definition}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Discretization - Matrix Form}
+	\begin{itemize}
+		\item Define for a basis $\{\varphi_i\}$ of $V_h$ the coefficient vector $\mathbf{v}$ for $v_h \in V_h$ as $	v_h(x) = \sum_{i=0}^{N} \mathbf{v}_i \varphi_i^h(x)$
+		\item With this representation, the discrete problem can be more clearly written as follows:
+	\end{itemize}
+		\begin{equation} \label{eq:matrix_formulation}
+	\min_{\substack{\mathbf{v} \in \mathbb{R}^{(N+1)}\\ \mathbf{v}_{0} \geq 0,\, \mathbf{v}_N \geq 0}} \frac{1}{2} \mathbf{v}^T (B_1 + B_2) \mathbf{v} - \mathbf{f}^T  \mathbf{v}
+\end{equation}
+\vspace{-0.8cm}
+\begin{itemize}
+	\item We call $B_1$ the \emph{mass matrix} and $B_2$ the \emph{stiffness matrix}. $B_1$, $B_2$ and $\mathbf{f} \in \mathbb{R}^{(N+1)}$ are defined as follows:
+\end{itemize}
+\vspace{-0.5cm}
+\begin{align*}
+	B_1 \coloneqq 			h	\begin{pmatrix}
+		1/3& 1/6 & & & & & \\
+		1/6& 2/3& 1/6 & & & & \\
+		& 1/6& 2/3& 1/6 & & & \\
+		& & & \ddots & & & \\
+		& & & 1/6& 2/3& 1/6 & \\
+		& & & & 1/6& 2/3& 1/6 \\
+		& & & & & 1/6& 1/3
+	\end{pmatrix}, \,
+	B_2 \coloneqq \frac{1}{h} 			\begin{pmatrix}
+		1& -1 & & & & & \\
+		-1& 2& -1 & & & & \\
+		& -1& 2& -1 & & & \\
+		& & & \ddots & & & \\
+		& & & -1& 2& -1 & \\
+		& & & & -1& 2& -1 \\
+		& & & & & -1& 1
+	\end{pmatrix}, \,
+	\,
+	\mathbf{f}_i \coloneqq \phantom{h} \left(\int_{-1}^1 f\varphi_i^h\dif x\right)
+\end{align*}
+\end{frame}
+
+
+\section{Error Estimates}
+\PraesentationMasterWeissBlau
+\begin{frame}[plain, noframenumbering]
+	\centering
+	\vspace{6cm}
+	\huge{\thesection . \secname}
+\end{frame}
+\PraesentationMasterStandard
+\begin{frame}
+	\frametitle{Overview}
+	\begin{itemize}
+		\item We will derive optimal-order error estimates in the $L^{\infty}$, $H^1$ and $H^2$ norms
+		\item Optimal in the sense that they are of the same order as the interpolation error for the same equidistant nodes
+		\item In this section, let $u \in H^2(\Omega)$ be the unique solution of the Signorini Problem for a fixed $f \in L^2(\Omega)$, $u_h \in V_h$ be the discrete solution for the same $f$
+		\item All constants mentioned therefore depend on the choice of $f$
+		\item The results we will derive are the following:
+	\end{itemize}
+	\begin{theorem}
+		There exist $C \in \mathbb{R}_{>0}$ such that the following holds:
+		\begin{equation}
+			\norm{u-u_h}_{L^\infty(\Omega)} \leq C h^{\sfrac{3}{2}}, \quad \norm{u-u_h}_{H^1(\Omega)} \leq C h, \quad 	\norm{u-u_h}_{L^2(\Omega)} \leq Ch^2
+		\end{equation}
+	\end{theorem}
+\end{frame}
+
+\subsection{The Ritz Projection - $L^\infty$ and $H^1$ Errors} 
+\begin{frame}
+	\frametitle{The Ritz Projection}
+	\begin{itemize}
+		\item The Ritz Projection $R_h(u)$ is the orthogonal projection from $H^1(\Omega)$ into its subspace $V_h$
+		\item Because of orthogonality, it is the solution to the following minimization problem:
+	\end{itemize}
+	\begin{equation}
+		R_h(u) = \argmin_{\substack{v_h \in V_h}} \norm{v_h - u}_{H_1}
+	\end{equation}
+\vspace{-0.5cm}
+\begin{itemize}
+	\item The Ritz Projection can also be expressed as the solution $\tilde{u}_h$ to the following (discrete) variational inequality:
+\end{itemize}
+\begin{equation}\label{eq:ritz_variational}
+	(\tilde{u}_h, v_h-\tilde{u}_h)_{H^1(\Omega)} \geq (f, v_h-\tilde{u}_h)_{L^2(\Omega)} \quad \forall v_h \in \tilde{K}_h
+\end{equation}
+\vspace{-1cm}
+\begin{itemize}
+	\item where $\tilde{K}_h$ is defined as follows:
+\end{itemize}
+\vspace{-1cm}
+\begin{align*}
+	\tilde{K}_h \coloneqq \{v_h \in V_h \,|\,  v_h(1) &\geq (R_h(u) - u)(1) \quad \text{and} \\
+	v_h(-1) &\geq (R_h(u) - u)(-1)\}
+\end{align*}
+\end{frame}
+
+\begin{frame}
+	\frametitle{The Ritz Projection - Supercloseness}
+	\begin{itemize}
+		\item The main result about the Ritz Projection is the following ``supercloseness'' result:
+	\end{itemize}
+	\begin{equation}\label{eq:supercloseness}
+	\norm{u_h - R_h(u)}_{H^1(\Omega)} \leq \frac{7}{3} \max \left(\abs{(u-R_h(u))(-1)}, \abs{(u-R_h(u))(1)}\right) \leq \norm{u-R_h(u)}_{L^{\infty}(\Omega)}
+\end{equation}
+\vspace{-1cm}
+	\begin{itemize}
+		\item The discrete solution and the Ritz Projection are ``superclose'' in the $H^1$ and $L^\infty$ norms, i.e. their error order is at least as good as the total error
+		\item Using this, known results about the error between the solution and the Ritz Projection, we may derive the total error in the $H^1$ and $L^\infty$ norms by the triangle inequality
+		\item Here the $H^2$ regularity is crucial, since the errors of the Ritz Projection use interpolation, which requires regularity of the higher (weak) derivatives
+	\end{itemize}
+\end{frame}
+
+\subsection{Dual Problems - The $L^2$ Error} 
+\begin{frame}
+	\frametitle{The Dual Problems}
+	\vspace{1cm}
+	\begin{definition}
+		Firstly, define the following sets of functions fulfilling boundary conditions:
+		\begin{align*}
+			L \coloneqq \left\{ v \in H^1(\Omega) \,|\, v(\pm 1) \geq 0 \,\,\text{if}\,\, u(\pm 1) = 0 \right\} , \quad
+			\tilde{L} \coloneqq \left\{ v \in H^1(\Omega) \,|\, v(\pm 1) \geq 0 \,\,\text{if}\,\, u_h(\pm 1) = 0 \right\}
+		\end{align*} 
+		Then we define the dual problems as follows:
+		\begin{align} 
+			z \in L,\quad (z,v-z)_{H^1(\Omega)} \geq (-\max(0,u-u_h),v-z)_{L^2(\Omega)} \quad \forall v \in L \label{eq:dual_variational_inequality} \\
+			z \in \tilde{L},\quad (z,v-z)_{H^1(\Omega)} \geq (-\min(0,u_h-u),v-z)_{L^2(\Omega)} \quad \forall v \in \tilde{L}
+		\end{align}
+	\end{definition}
+\vspace{-0.5cm}
+\begin{itemize}
+	\item We will only analyze the dual problem for the positive component here, since the other one is analogous
+	\item Because we generalized the solvability proof of the Signorini Problem, these variational inequalities are also uniquely solvable 
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Proof of the $L^2$ Error}
+	\begin{itemize}
+		\item As already hinted, we split the error into the positive and negative components of the solution
+		\item The key inequality to derive is the following (let $z$ be the solution to the positive dual problem):
+	\end{itemize}
+\begin{equation}
+			\norm{\max(0,u-u_h)}_{L^2(\Omega)}^2 \leq (z-I_h(z), u_h - u)_{H^1(\Omega)} \label{eq:scalar_producx_ineq_L2}
+\end{equation}
+\vspace{-1cm}
+\begin{itemize}
+	\item Its proof is not trivial, and follows from observations about the solution to the dual problem, Stampacchia's Lemma and the Sobolev Embedding to get inequalities everywhere and not only a.e.
+	\item With this inequality, Cauchy-Schwarz, the $H^1$ error result, known results about interpolation error and, again, $H^2$-regularity, the result follows
+\end{itemize}
+\end{frame}
+
+\section{Numerical Tests}
+\PraesentationMasterWeissBlau
+\begin{frame}[plain, noframenumbering]
+	\centering
+	\vspace{6cm}
+	\huge{\thesection . \secname}
+\end{frame}
+\PraesentationMasterStandard
+
+\subsection{Methods}
+\begin{frame}
+	\frametitle{Methods}
+	\begin{itemize}
+		\item To calculate the $\mathbf{f}$ vector:
+	\end{itemize}
+	\begin{equation}
+		\mathbf{f}_i = \int_{-1}^1 f\varphi_i^h\dif x = \int_{\max\{-1, x_{i-1}\}}^{\min\{1, x_{i+1}\}} f\varphi_i^h\dif x
+	\end{equation} 
+\vspace{-1cm}
+	\begin{itemize}
+		\item To compare a discrete solution to an exact one:
+	\end{itemize}
+	\begin{align}
+		\norm{u-u_h}_{L^\infty(\Omega)} &\approx \max \left\{\abs{u(x) - u_h(x)} \,|\, x \in \{-1 = x_0,\dots, x_n = 1, x_{i+1} - x_i = \sfrac{h}{1000}\} \right\} \\
+		\norm{u-u_h}_{L^2(\Omega)} &= \sqrt{\sum_{i=0}^{N-1} \norm{u-u_h}_{L^2(x_i, x_{i+1})}^2 } \\
+		\norm{u-u_h}_{H^1(\Omega)} &= \sqrt{\sum_{i=0}^{N-1} \norm{u-u_h}_{L^2(x_i, x_{i+1})}^2 + \sum_{i=0}^{N-1} \norm{u'-u_h'}_{L^2(x_i, x_{i+1})}^2} 
+	\end{align}
+\end{frame}	
+	
+\begin{frame}
+	\frametitle{Methods}
+	\begin{itemize}
+		\item To compare a discrete solution to a finer discrete one, the reference solution,
+		\item Denote the reference solution vector as $\mathbf{v}^{\tilde{h}}$ and the interpolation of a lower dimensional one into $V_{\tilde{h}}$ as $\tilde{\mathbf{v}}^h$, then the norms can be exactly calculated as follows:
+	\end{itemize}
+\vspace{-0.7cm}
+\begin{align}
+	\norm{u_{\tilde{h}} - u_h}_{L^\infty(\Omega)} &= \max_{i \in \{0,\dots,\mathrm{dim} \, V_{\tilde{h}}\}} \abs{\mathbf{v}^{\tilde{h}}_i - \tilde{\mathbf{v}}^h_i} \\
+	\norm{u_{\tilde{h}} - u_h}_{L^2(\Omega)} &=  \sqrt{(\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)^T B_1 (\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)}\\
+	\norm{u_{\tilde{h}} - u_h}_{H^1(\Omega)} &= \sqrt{(\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)^T (B_1+B_2) (\mathbf{v}^{\tilde{h}} - \tilde{\mathbf{v}}^h)}
+\end{align}
+\vspace{-1cm}
+\begin{itemize}
+	\item Finally, to check the convergence orders, we use the Experimental Orders of Convergence (EOCs):
+\end{itemize}
+\begin{equation}
+	(\mathrm{EOC})_{h_k,\,\norm{\cdot}_*} \coloneqq \frac{\log \lVert u-u_{h_k}\rVert_* - \lVert\log u-u_{h_{k-1}}\rVert_* }{\log h_k - \log h_{k-1}}
+\end{equation}
+\end{frame}
+
+\subsection{Results}
+\begin{frame}[c]
+	\centering
+	\frametitle{Results for $f = \sin$}
+		\begin{tabular}{c@{\hskip -1em}c}
+			\input{../sin_sol.tex} & \input{../sin_sol_derivative.tex}	
+		\end{tabular}
+\end{frame}
+
+\begin{frame}[c]
+	\centering
+	\frametitle{Results for $f = \sin$}
+	\vspace{0.5cm}
+			\begin{tabular}{c@{\hskip 5em}c}
+				Absolute Error: & EOC: \\
+			\bgroup
+	\def\arraystretch{1.3}
+		\begin{tabular}[t]{cccc}
+			\hline
+			$h$ & $L^\infty(\Omega)$ & $H^1(\Omega)$ & $L^2(\Omega)$ \\
+			\hline
+			$\sfrac{1}{2}$      	&	\num{1.9989e-02}	&	\num{6.0676e-02}	&	\num{1.2335e-02}\\
+			$\sfrac{1}{2^2}$	&	\num{5.7357e-03}	&	\num{3.5344e-02}	&	\num{3.1109e-03}	\\
+			$\sfrac{1}{2^3}$	&	\num{1.5349e-03}	&	\num{1.9586e-02}	&	\num{7.7933e-04}	\\
+			$\sfrac{1}{2^4}$	&	\num{3.9704e-04}	&	\num{1.0339e-02}	&	\num{1.9493e-04}	\\
+			$\sfrac{1}{2^5}$	&	\num{1.0097e-04}	&	\num{5.3138e-03}	&	\num{4.8739e-05}	\\
+			$\sfrac{1}{2^6}$	&	\num{2.5460e-05}	&	\num{2.6938e-03}	&	\num{1.2185e-05}	\\
+			$\sfrac{1}{2^7}$	&	\num{6.3924e-06}	&	\num{1.3562e-03}	&	\num{3.0463e-06}	\\
+			$\sfrac{1}{2^8}$	&	\num{1.6015e-06}	&	\num{6.8046e-04}	&	\num{7.6157e-07}	\\
+			$\sfrac{1}{2^9}$	&	\num{4.0081e-07}	&	\num{3.4082e-04}	&	\num{1.9039e-07}	\\
+			$\sfrac{1}{2^{10}}$	&	\num{1.0026e-07}	&	\num{1.7056e-04}	&	\num{4.7594e-08}	\\						
+		\end{tabular}	\egroup & 			\bgroup
+	\def\arraystretch{1.3}
+		\begin{tabular}[t]{cccc}
+		\hline
+		$h$ & $L^\infty(\Omega)$ & $H^1(\Omega)$ & $L^2(\Omega)$ \\
+		\hline
+		$\sfrac{1}{2}$      	&	-	&	-	&	- \\
+		$\sfrac{1}{2^2}$	&	\num{1.8012}	&	\num{0.7797}	&	\num{1.9873} \\
+		$\sfrac{1}{2^3}$	&	\num{1.9018}	&	\num{0.8516}	&	\num{1.9970} \\
+		$\sfrac{1}{2^4}$	&	\num{1.9508}	&	\num{0.9216}	&	\num{1.9993} \\
+		$\sfrac{1}{2^5}$	&	\num{1.9753}	&	\num{0.9603}	&	\num{1.9998} \\
+		$\sfrac{1}{2^6}$	&	\num{1.9876}	&	\num{0.9801}	&	\num{2.0000} \\
+		$\sfrac{1}{2^7}$	&	\num{1.9938}	&	\num{0.9900}	&	\num{2.0000} \\
+		$\sfrac{1}{2^8}$	&	\num{1.9969}	&	\num{0.9950}	&	\num{2.0000} \\
+		$\sfrac{1}{2^9}$	&	\num{1.9985}	&	\num{0.9975}	&	\num{2.0000} \\
+		$\sfrac{1}{2^{10}}$	&	\num{1.9992}	&	\num{0.9988}	&	\num{2.0001} \\
+		\hline				
+		theo. & $1.5$ & $1$ & $2$
+	\end{tabular}
+\egroup
+		\end{tabular}
+\end{frame}
+
+\begin{frame}[c]
+	\centering
+	\frametitle{Results for $f = \abs{x}^{\sfrac{1}{2} - \epsilon}$}
+	\begin{tabular}{c@{\hskip -1em}c}
+		\input{../sin_sol.tex} & \input{../sin_sol_derivative.tex}	
+	\end{tabular}
+\end{frame}
+
+\begin{frame}[c]
+	\centering
+	\frametitle{Results for $f = \abs{x}^{\sfrac{1}{2} - \epsilon}$}
+	\vspace{0.5cm}
+	\begin{tabular}{c@{\hskip 5em}c}
+		Absolute Error: & EOC: \\
+		\bgroup
+		\def\arraystretch{1.3}
+		\begin{tabular}[t]{cccc}
+			\hline
+			$h$ & $L^\infty(\Omega)$ & $H^1(\Omega)$ & $L^2(\Omega)$ \\
+			\hline
+			$\sfrac{1}{2}$      &	\num{1.6742e-02}	&	\num{1.2787e-01}	&	\num{1.4965e-02} \\
+			$\sfrac{1}{2^2}$	&	\num{9.1475e-03}	&	\num{8.5222e-02}	&	\num{5.7176e-03} \\
+			$\sfrac{1}{2^3}$	&	\num{4.6159e-03}	&	\num{5.3941e-02}	&	\num{1.9150e-03} \\
+			$\sfrac{1}{2^4}$	&	\num{2.0228e-03}	&	\num{3.2449e-02}	&	\num{5.9309e-04} \\
+			$\sfrac{1}{2^5}$	&	\num{8.1881e-04}	&	\num{1.8801e-02}	&	\num{1.7485e-04} \\
+			$\sfrac{1}{2^6}$	&	\num{3.1625e-04}	&	\num{1.0603e-02}	&	\num{4.9880e-05} \\
+			$\sfrac{1}{2^7}$	&	\num{1.1865e-04}	&	\num{5.8610e-03}	&	\num{1.3901e-05} \\
+			$\sfrac{1}{2^8}$	&	\num{4.3684e-05}	&	\num{3.1871e-03}	&	\num{3.8035e-06} \\
+			$\sfrac{1}{2^9}$	&	\num{1.5682e-05}	&	\num{1.7037e-03}	&	\num{1.0208e-06} \\
+			$\sfrac{1}{2^{10}}$	&	\num{5.6627e-06}	&	\num{8.8349e-04}	&	\num{2.6405e-07} 
+		\end{tabular}
+		\egroup  & 			\bgroup
+		\def\arraystretch{1.3}
+		\begin{tabular}[t]{cccc}
+			\hline
+			$h$ & $L^\infty(\Omega)$ & $H^1(\Omega)$ & $L^2(\Omega)$ \\
+			\hline
+			$\sfrac{1}{2}$      &	-		&		-		&		- \\
+			$\sfrac{1}{2^2}$	&	\num{0.8720}		&		\num{0.5854}		&		\num{1.3881} \\
+			$\sfrac{1}{2^3}$	&	\num{0.9868}		&		\num{0.6598}		&		\num{1.5780} \\
+			$\sfrac{1}{2^4}$	&	\num{1.1903}		&		\num{0.7332}		&		\num{1.6910} \\
+			$\sfrac{1}{2^5}$	&	\num{1.3047}		&		\num{0.7873}		&		\num{1.7621} \\
+			$\sfrac{1}{2^6}$	&	\num{1.3725}		&		\num{0.8263}		&		\num{1.8096} \\
+			$\sfrac{1}{2^7}$	&	\num{1.4144}		&		\num{0.8553}		&		\num{1.8433} \\
+			$\sfrac{1}{2^8}$	&	\num{1.4415}		&		\num{0.8789}		&		\num{1.8698} \\
+			$\sfrac{1}{2^9}$	&	\num{1.4780}		&		\num{0.9036}		&		\num{1.8976} \\
+			$\sfrac{1}{2^{10}}$	&	\num{1.4696}		&		\num{0.9474}		&		\num{1.9509} \\
+			\hline	
+			theo. & $1.5$ & $1$ & $2$
+		\end{tabular}
+		\egroup
+	\end{tabular}
+\end{frame}
+
+%\PraesentationMasterKopfzeileDreizeiler
+\begin{frame}
+\frametitle{\,}
+\Huge Thank You for listening! \newline
+\Huge Any questions?
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document} % !!! NICHT ENTFERNEN !!!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
